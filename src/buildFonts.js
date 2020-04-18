@@ -50,26 +50,26 @@ function buildGlyphSet (fonts: Array<Font>): Map {
   return map
 }
 
-function commandsToCode (commands: Array<Command>) {
+function commandsToCode (commands: Array<Command>): Array<number> {
   let prevX, prevY, add
-  return commands.flatMap(command => {
+  const path = []
+  commands.forEach(command => {
     const { type, x, y, x1, y1, x2, y2 } = command
     add = x === prevX && y === prevY
     prevX = x
     prevY = y
     if (type === 'M') { // Move to
-      return [0, Math.round(x * 4096), Math.round(-y * 4096)]
+      path.push(0, Math.round(x * 4096), Math.round(-y * 4096))
     } else if (type === 'L') { // Line to
-      if (add) return []
-      return [1, Math.round(x * 4096), Math.round(-y * 4096)]
+      if (!add) path.push(1, Math.round(x * 4096), Math.round(-y * 4096))
     } else if (type === 'C') { // Cubic Bezier
-      if (add) return []
-      return [2, Math.round(x2 * 4096), Math.round(-y2 * 4096), Math.round(x1 * 4096), Math.round(-y1 * 4096), Math.round(x * 4096), Math.round(-y * 4096)]
+      if (!add) path.push(1, Math.round(x2 * 4096), Math.round(-y2 * 4096), Math.round(x1 * 4096), Math.round(-y1 * 4096), Math.round(x * 4096), Math.round(-y * 4096))
     } else if (type === 'Q') { // Quadratic Bezier
-      if (add) return []
-      return [3, Math.round(x1 * 4096), Math.round(-y1 * 4096), Math.round(x * 4096), Math.round(-y * 4096)]
+      if (!add) path.push(3, Math.round(x1 * 4096), Math.round(-y1 * 4096), Math.round(x * 4096), Math.round(-y * 4096))
     } else if (type === 'Z') { // finish
-      return [4]
+      path.push(4)
     }
   })
+
+  return path
 }

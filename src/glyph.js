@@ -6,8 +6,6 @@ type Path = Array<number> | { vertices: Array<number>, indices: Array<number>, q
 
 export default class Glyph {
   unicode: number
-  advanceWidth: number
-  path: Path
   _advanceWidth: number
   _path: number
   constructor (pbf: Protobuf, end: number) {
