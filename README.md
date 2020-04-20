@@ -24,9 +24,9 @@ yarn
 ### Example use
 ```js
 // ES6
-import buildFonts from 'glyph-pbf'
+import buildFonts from 'glyph-pbf/buildFonts'
 // ES5
-const buildFonts = require('glyph-pbf').default
+const buildFonts = require('glyph-pbf/buildFonts').default
 
 // buildFonts([inputFile, inputFile], outputFileName)
 buildFonts(['./testFonts/NotoSans-Regular.ttf', './testFonts/arial-unicode-ms.ttf'], './default.pbf')

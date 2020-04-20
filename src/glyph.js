@@ -36,12 +36,13 @@ export default class Glyph {
 
   _buildPath (path: Array<number>): { vertices: Array<number>, indices: Array<number>, quads: Array<number> } {
     const len = path.length
-    const vertices = [0, 0]
+    const vertices = []
     const indices = []
     const quads = []
     let command, x, y, x1, y1
     let i = 0
-    let indexPos = 0
+    let anchorPos = 0
+    let indexPos = -1
 
     while (i < len) {
       // first get command
@@ -54,19 +55,20 @@ export default class Glyph {
       }
       // MoveTo - start a triangle with its first two points
       if (command === 0) {
-        indices.push(0, indexPos)
+        anchorPos = indexPos
+        indices.push(indexPos, indexPos)
       } else if (command === 1) { // LineTo - finish triangle and setup the next triangles first two points
         // finish a triangle, and start another
-        indices.push(indexPos, 0, indexPos)
+        indices.push(indexPos, anchorPos, indexPos)
       } else if (command === 3) { // Quadratic Bezier to
         // store vertices
         vertices.push(path[i++] / 4096, path[i++] / 4096, path[i++] / 4096, path[i++] / 4096)
         // store the quad
         quads.push(indexPos++, indexPos++, indexPos)
         // store the next part of the main polygon
-        indices.push(indexPos, 0, indexPos)
+        indices.push(indexPos, anchorPos, indexPos)
       } else if (command === 4) { // Close - finish the last triangle
-        indices.push(0)
+        indices.push(anchorPos)
       }
     }
 

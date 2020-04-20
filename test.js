@@ -22,7 +22,7 @@ const glyphSet = new GlyphSet(pbf)
 console.timeEnd('build')
 
 console.time('getCode')
-const char = 'b'.charCodeAt(0)
+const char = 'e'.charCodeAt(0)
 // const a = 97
 const glyph = glyphSet.get(char)
 console.timeEnd('getCode')
