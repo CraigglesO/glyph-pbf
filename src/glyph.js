@@ -6,7 +6,8 @@ type Path = Array<number> | { vertices: Array<number>, indices: Array<number>, q
 
 export default class Glyph {
   unicode: number
-  _advanceWidth: number
+  advanceWidth: number
+  path: Path
   _path: number
   constructor (pbf: Protobuf, end: number) {
     this._pbf = pbf
@@ -15,18 +16,11 @@ export default class Glyph {
 
   readGlyph (tag: number, glyph: Glyph, pbf: Protobuf) {
     if (tag === 1) glyph.unicode = pbf.readVarint()
-    else if (tag === 2) glyph._advanceWidth = pbf.pos
+    else if (tag === 2) glyph.advanceWidth = pbf.readVarint() / 4096
     else if (tag === 3) glyph._path = pbf.pos
   }
 
-  getAdvanceWidth () {
-    // set position
-    this._pbf.pos = this._advanceWidth
-    // bypass tag encoding
-    return this._pbf.readVarint() / 4096
-  }
-
-  getPath (buildPath: boolean): Path {
+  getPath (buildPath: boolean = true): Path {
     // set position
     this._pbf.pos = this._path
     // find end

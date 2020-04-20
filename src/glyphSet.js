@@ -22,9 +22,4 @@ export default class GlyphSet extends Map {
       glyphSet.set(glyph.unicode, glyph)
     }
   }
-
-  buildGlyph (key: number) {
-    const glyph = super.get(key)
-    return { advanceWidth: glyph.getAdvanceWidth(), path: glyph.getPath(true) }
-  }
 }

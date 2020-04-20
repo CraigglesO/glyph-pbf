@@ -22,17 +22,19 @@ const glyphSet = new GlyphSet(pbf)
 console.timeEnd('build')
 
 console.time('getCode')
-const char = 'a'.charCodeAt(0)
+const char = 'b'.charCodeAt(0)
 // const a = 97
-const getGlyph = glyphSet.buildGlyph(char)
+const glyph = glyphSet.get(char)
 console.timeEnd('getCode')
+
+console.time('buildPath')
+const { indices, vertices, quads } = glyph.getPath()
+console.timeEnd('buildPath')
 
 // console.log('getGlyph', getGlyph)
 
-const { indices, vertices, quads } = getGlyph.path
-
 // console.log('indices', indices)
-// console.log('vertices', vertices)
+console.log('vertices', vertices.length)
 console.log('count', indices.length + vertices.length + quads.length)
 
 const featureCollection = {
