@@ -1,4 +1,4 @@
-# glyph-pbf [![travis][travis-image]][travis-url] [![npm][npm-image]][npm-url] [![downloads][downloads-image]][downloads-url] [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
+# glyph-pbf [![travis][travis-image]][travis-url] [![npm][npm-image]][npm-url] [![downloads][downloads-image]][downloads-url] [![min](https://badgen.net/bundlephobia/min/glyph-pbf)](https://bundlephobia.com/result?p=glyph-pbf) [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
 
 [travis-image]: https://travis-ci.org/regia-corporation/glyph-pbf.svg?branch=master
 [travis-url]: https://travis-ci.org/regia-corporation/glyph-pbf
