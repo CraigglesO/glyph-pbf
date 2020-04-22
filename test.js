@@ -2,7 +2,7 @@ const buildFonts = require('./lib/buildFonts').default
 
 // buildFonts(['./testFonts/NotoSans-Regular.ttf'], './default.pbf')
 // buildFonts(['./testFonts/NotoSans-Regular.ttf', './testFonts/arial-unicode-ms.ttf'], './default.pbf')
-buildFonts(['./testFonts/Roboto-Medium.ttf'], './RobotoMedium.pbf')
+// buildFonts(['./testFonts/Roboto-Medium.ttf'], './RobotoMedium.pbf')
 
 
 
@@ -15,14 +15,14 @@ const zlib = require('zlib')
 
 const GlyphSet = require('./lib/glyphSet').default
 
-const pbf = zlib.gunzipSync(fs.readFileSync('./RobotoMedium.pbf'))
+const pbf = zlib.gunzipSync(fs.readFileSync('./default.pbf'))
 
 console.time('build')
 const glyphSet = new GlyphSet(pbf)
 console.timeEnd('build')
 
 console.time('getCode')
-const char = 'e'.charCodeAt(0)
+const char = 'μή'.charCodeAt(0)
 // const a = 97
 const glyph = glyphSet.get(char)
 console.timeEnd('getCode')
@@ -33,7 +33,9 @@ console.timeEnd('buildPath')
 
 // console.log('getGlyph', getGlyph)
 
+// console.log('quads', quads)
 // console.log('indices', indices)
+// console.log('vertices', vertices)
 console.log('vertices', vertices.length)
 console.log('count', indices.length + vertices.length + quads.length)
 
@@ -49,10 +51,10 @@ for (let i = 0, il = indices.length; i < il; i += 3) {
     geometry: {
       type: 'Polygon',
       coordinates: [[
-        [vertices[indices[i] * 2], vertices[indices[i] * 2 + 1]],
-        [vertices[indices[i + 1] * 2], vertices[indices[i + 1] * 2 + 1]],
-        [vertices[indices[i + 2] * 2], vertices[indices[i + 2] * 2 + 1]],
-        [vertices[indices[i] * 2], vertices[indices[i] * 2 + 1]]
+        [vertices[indices[i] * 3] / 4096, vertices[indices[i] * 3 + 1] / 4096],
+        [vertices[indices[i + 1] * 3] / 4096, vertices[indices[i + 1] * 3 + 1] / 4096],
+        [vertices[indices[i + 2] * 3] / 4096, vertices[indices[i + 2] * 3 + 1] / 4096],
+        [vertices[indices[i] * 3] / 4096, vertices[indices[i] * 3 + 1] / 4096]
       ]]
     }
   }
@@ -74,10 +76,10 @@ for (let i = 0, il = quads.length; i < il; i += 3) {
     geometry: {
       type: 'Polygon',
       coordinates: [[
-        [vertices[quads[i] * 2], vertices[quads[i] * 2 + 1]],
-        [vertices[quads[i + 1] * 2], vertices[quads[i + 1] * 2 + 1]],
-        [vertices[quads[i + 2] * 2], vertices[quads[i + 2] * 2 + 1]],
-        [vertices[quads[i] * 2], vertices[quads[i] * 2 + 1]]
+        [vertices[quads[i] * 3] / 4096, vertices[quads[i] * 3 + 1] / 4096],
+        [vertices[quads[i + 1] * 3] / 4096, vertices[quads[i + 1] * 3 + 1] / 4096],
+        [vertices[quads[i + 2] * 3] / 4096, vertices[quads[i + 2] * 3 + 1] / 4096],
+        [vertices[quads[i] * 3] / 4096, vertices[quads[i] * 3 + 1] / 4096]
       ]]
     }
   }

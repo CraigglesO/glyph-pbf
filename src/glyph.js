@@ -16,7 +16,7 @@ export default class Glyph {
 
   readGlyph (tag: number, glyph: Glyph, pbf: Protobuf) {
     if (tag === 1) glyph.unicode = pbf.readVarint()
-    else if (tag === 2) glyph.advanceWidth = pbf.readVarint() / 4096
+    else if (tag === 2) glyph.advanceWidth = pbf.readVarint()
     else if (tag === 3) glyph._path = pbf.pos
   }
 
@@ -49,8 +49,10 @@ export default class Glyph {
       command = path[i++]
       // no matter what, add the vertices and increment indexPos
       if (command === 0 || command === 1) { // MoveTo or LineTo
-        // add vertices
-        vertices.push(path[i++] / 4096, path[i++] / 4096)
+        // add vertices with polygon-type
+        x = path[i++]
+        y = path[i++]
+        vertices.push(x, y, 0)
         indexPos++
       }
       // MoveTo - start a triangle with its first two points
@@ -61,10 +63,22 @@ export default class Glyph {
         // finish a triangle, and start another
         indices.push(indexPos, anchorPos, indexPos)
       } else if (command === 3) { // Quadratic Bezier to
+        // first restore x any y as a start-quad type
+        vertices.push(x, y, 1)
+        indexPos++
+        // get the new values
+        x1 = path[i++]
+        y1 = path[i++]
+        x = path[i++]
+        y = path[i++]
         // store vertices
-        vertices.push(path[i++] / 4096, path[i++] / 4096, path[i++] / 4096, path[i++] / 4096)
-        // store the quad
-        quads.push(indexPos++, indexPos++, indexPos)
+        vertices.push(
+          x1, y1, 2, // the mid-quad vertices
+          x, y, 3, // the end-quad vertices
+          x, y, 0 // the next vertices in the polygon
+        )
+        // the first set of vertices added were the quad
+        quads.push(indexPos++, indexPos++, indexPos++)
         // store the next part of the main polygon
         indices.push(indexPos, anchorPos, indexPos)
       } else if (command === 4) { // Close - finish the last triangle
