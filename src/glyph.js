@@ -24,7 +24,7 @@ export default class Glyph {
 
   readGlyph (tag: number, glyph: Glyph, pbf: Protobuf) {
     if (tag === 1) glyph.unicode = pbf.readVarint()
-    else if (tag === 2) glyph.advanceWidth = pbf.readVarint()
+    else if (tag === 2) glyph.advanceWidth = pbf.readVarint() / 4096
     else if (tag === 3) glyph._path = pbf.pos
   }
 
@@ -54,12 +54,12 @@ export default class Glyph {
 
     while (i < len) {
       // first get command
-      command = path[i++]
+      command = path[i++] / 4096
       // no matter what, add the vertices and increment indexPos
       if (command === 0 || command === 1) { // MoveTo or LineTo
         // add vertices with polygon-type
-        x = path[i++]
-        y = path[i++]
+        x = path[i++] / 4096
+        y = path[i++] / 4096
         vertices.push(x, y, 0)
         indexPos++
       }
@@ -75,10 +75,10 @@ export default class Glyph {
         vertices.push(x, y, 1)
         indexPos++
         // get the new values
-        x1 = path[i++]
-        y1 = path[i++]
-        x = path[i++]
-        y = path[i++]
+        x1 = path[i++] / 4096
+        y1 = path[i++] / 4096
+        x = path[i++] / 4096
+        y = path[i++] / 4096
         // store vertices
         vertices.push(
           x1, y1, 2, // the mid-quad vertices
