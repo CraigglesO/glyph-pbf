@@ -4,6 +4,14 @@ import { zagzig } from './zigzag'
 
 type Path = Array<number> | { vertices: Array<number>, indices: Array<number>, quads: Array<number> }
 
+/**
+Since we are drawing quads, there are 4 types
+polygons are all defined by type 0: [0, 1]
+the start of a quad is defined by type 1: [0, 0]
+the middle of a quad is defined by type 2: [0.5, 0]
+the end of a quad is defined by type 3: [1, 1]
+**/
+
 export default class Glyph {
   unicode: number
   advanceWidth: number
@@ -30,7 +38,7 @@ export default class Glyph {
     // get path code
     while (this._pbf.pos < end) path.push(zagzig(this._pbf.readVarint()))
     // if build, design a polygon, otherwise keep the commands
-    if (buildPath && path.length) return this._buildPath(path)
+    if (buildPath) return this._buildPath(path)
     else return path
   }
 
