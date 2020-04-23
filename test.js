@@ -1,4 +1,4 @@
-const buildFonts = require('./lib/buildFonts').default
+// const buildFonts = require('./lib/buildFonts').default
 
 // buildFonts(['./testFonts/NotoSans-Regular.ttf'], './default.pbf')
 // buildFonts(['./testFonts/NotoSans-Regular.ttf', './testFonts/arial-unicode-ms.ttf'], './default.pbf')
@@ -22,7 +22,8 @@ const glyphSet = new GlyphSet(pbf)
 console.timeEnd('build')
 
 console.time('getCode')
-const char = 'μή'.charCodeAt(0)
+// const char = 'μή'.charCodeAt(0)
+const char = 9633
 // const a = 97
 const glyph = glyphSet.get(char)
 console.timeEnd('getCode')
@@ -33,9 +34,9 @@ console.timeEnd('buildPath')
 
 // console.log('getGlyph', getGlyph)
 
-// console.log('quads', quads)
-// console.log('indices', indices)
-// console.log('vertices', vertices)
+console.log('quads', quads)
+console.log('indices', indices)
+console.log('vertices', vertices)
 console.log('vertices', vertices.length)
 console.log('count', indices.length + vertices.length + quads.length)
 
@@ -51,10 +52,10 @@ for (let i = 0, il = indices.length; i < il; i += 3) {
     geometry: {
       type: 'Polygon',
       coordinates: [[
-        [vertices[indices[i] * 3] / 4096, vertices[indices[i] * 3 + 1] / 4096],
-        [vertices[indices[i + 1] * 3] / 4096, vertices[indices[i + 1] * 3 + 1] / 4096],
-        [vertices[indices[i + 2] * 3] / 4096, vertices[indices[i + 2] * 3 + 1] / 4096],
-        [vertices[indices[i] * 3] / 4096, vertices[indices[i] * 3 + 1] / 4096]
+        [vertices[indices[i] * 3], vertices[indices[i] * 3 + 1]],
+        [vertices[indices[i + 1] * 3], vertices[indices[i + 1] * 3 + 1]],
+        [vertices[indices[i + 2] * 3], vertices[indices[i + 2] * 3 + 1]],
+        [vertices[indices[i] * 3], vertices[indices[i] * 3 + 1]]
       ]]
     }
   }
@@ -76,10 +77,10 @@ for (let i = 0, il = quads.length; i < il; i += 3) {
     geometry: {
       type: 'Polygon',
       coordinates: [[
-        [vertices[quads[i] * 3] / 4096, vertices[quads[i] * 3 + 1] / 4096],
-        [vertices[quads[i + 1] * 3] / 4096, vertices[quads[i + 1] * 3 + 1] / 4096],
-        [vertices[quads[i + 2] * 3] / 4096, vertices[quads[i + 2] * 3 + 1] / 4096],
-        [vertices[quads[i] * 3] / 4096, vertices[quads[i] * 3 + 1] / 4096]
+        [vertices[quads[i] * 3], vertices[quads[i] * 3 + 1]],
+        [vertices[quads[i + 1] * 3], vertices[quads[i + 1] * 3 + 1]],
+        [vertices[quads[i + 2] * 3], vertices[quads[i + 2] * 3 + 1]],
+        [vertices[quads[i] * 3], vertices[quads[i] * 3 + 1]]
       ]]
     }
   }

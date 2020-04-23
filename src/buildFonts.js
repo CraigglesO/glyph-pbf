@@ -38,7 +38,8 @@ function buildGlyphSet (fonts: Array<Font>): Map {
       const glyph = glyphs.glyphs[key]
       const { unicode, advanceWidth } = glyph
       if (unicode && !map.has(unicode)) {
-        const path = commandsToCode(glyph.getPath(0, 0, 1).commands)
+        // const path = commandsToCode(glyph.getPath(0, 0, 1).commands)
+        // if (unicode === 9633) console.log('path', glyph.getPath(0, 0, 1).commands, path)
         map.set(unicode, {
           advanceWidth: Math.round(advanceWidth / unitsPerEm * 4096),
           path: commandsToCode(glyph.getPath(0, 0, 1).commands)

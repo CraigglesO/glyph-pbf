@@ -54,7 +54,7 @@ export default class Glyph {
 
     while (i < len) {
       // first get command
-      command = path[i++] / 4096
+      command = path[i++]
       // no matter what, add the vertices and increment indexPos
       if (command === 0 || command === 1) { // MoveTo or LineTo
         // add vertices with polygon-type
