@@ -3,8 +3,8 @@ const buildFonts = require('./lib/buildFonts').default
 // buildFonts(['./testFonts/NotoSans-Regular.ttf'], './default.pbf')
 // buildFonts(['./testFonts/NotoSans-Regular.ttf', './testFonts/arial-unicode-ms.ttf'], './default.pbf')
 // buildFonts(['./testFonts/Roboto-Regular.ttf'], './RobotoRegular.pbf')
-// buildFonts(['./testFonts/Roboto-Medium.ttf'], './RobotoMedium.pbf')
-buildFonts(['./testFonts/Lato-Bold.ttf'], './LatoBold.pbf')
+buildFonts(['./testFonts/Roboto-Medium.ttf'], './RobotoMedium.pbf')
+// buildFonts(['./testFonts/Lato-Bold.ttf'], './LatoBold.pbf')
 
 
 // 352K	LatoBold.pbf
@@ -25,9 +25,9 @@ console.time('build')
 const glyphSet = new GlyphSet(pbf)
 console.timeEnd('build')
 
-console.log('kern f-i combo', glyphSet.kerningPairs['f'.charCodeAt(0)])
-console.log('f', 'f'.charCodeAt(0))
-console.log('i', 'i'.charCodeAt(0))
+// console.log('kern f-i combo', glyphSet.kerningPairs['f'.charCodeAt(0)])
+// console.log('f', 'f'.charCodeAt(0))
+// console.log('i', 'i'.charCodeAt(0))
 
 console.time('getCode')
 // const char = 'μή'.charCodeAt(0)
@@ -45,12 +45,12 @@ console.timeEnd('buildPath')
 
 // console.log('getGlyph', getGlyph)
 
-console.log('yOffset', yOffset)
-console.log('quads', quads)
-console.log('indices', indices)
-console.log('vertices', vertices)
-console.log('vertices', vertices.length)
-console.log('count', indices.length + vertices.length + quads.length)
+// console.log('yOffset', yOffset)
+// console.log('quads', quads)
+// console.log('indices', indices)
+// console.log('vertices', vertices)
+// console.log('vertices', vertices.length)
+// console.log('count', indices.length + vertices.length + quads.length)
 
 const featureCollection = {
   type: 'FeatureCollection',

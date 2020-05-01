@@ -87,17 +87,14 @@ function commandsToCode (commands: Array<Command>): [number, Array<number>] {
     add = x === prevX && y === prevY
     prevX = x
     prevY = y
+    if (type !== 'Z') yOffset = Math.min(yOffset, Math.round(-y * 4096))
     if (type === 'M') { // Move to
-      yOffset = Math.min(yOffset, Math.round(-y * 4096))
       path.push(0, Math.round(x * 4096), Math.round(-y * 4096))
     } else if (type === 'L') { // Line to
-      yOffset = Math.min(yOffset, Math.round(-y * 4096))
       if (!add) path.push(1, Math.round(x * 4096), Math.round(-y * 4096))
     } else if (type === 'C') { // Cubic Bezier
-      yOffset = Math.min(yOffset, Math.round(-y * 4096))
       if (!add) path.push(1, Math.round(x2 * 4096), Math.round(-y2 * 4096), Math.round(x1 * 4096), Math.round(-y1 * 4096), Math.round(x * 4096), Math.round(-y * 4096))
     } else if (type === 'Q') { // Quadratic Bezier
-      yOffset = Math.min(yOffset, Math.round(-y * 4096))
       if (!add) path.push(3, Math.round(x1 * 4096), Math.round(-y1 * 4096), Math.round(x * 4096), Math.round(-y * 4096))
     } else if (type === 'Z') { // finish
       path.push(4)
