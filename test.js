@@ -8,6 +8,7 @@ buildFonts(['./testFonts/Lato-Bold.ttf'], './LatoBold.pbf')
 
 
 // 352K	LatoBold.pbf
+// 380K LatoBold.pbf with kerningPairs
 
 
 
@@ -18,11 +19,15 @@ const zlib = require('zlib')
 const GlyphSet = require('./lib/glyphSet').default
 
 // const pbf = zlib.gunzipSync(fs.readFileSync('./default.pbf'))
-const pbf = zlib.gunzipSync(fs.readFileSync('./RobotoMedium.pbf'))
+const pbf = zlib.gunzipSync(fs.readFileSync('./LatoBold.pbf'))
 
 console.time('build')
 const glyphSet = new GlyphSet(pbf)
 console.timeEnd('build')
+
+console.log('kern f-i combo', glyphSet.kerningPairs['f'.charCodeAt(0)])
+console.log('f', 'f'.charCodeAt(0))
+console.log('i', 'i'.charCodeAt(0))
 
 console.time('getCode')
 // const char = 'μή'.charCodeAt(0)

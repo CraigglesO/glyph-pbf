@@ -6,7 +6,16 @@ import serialize from './serialize'
 
 export type Glyph = {
   advanceWidth: number,
+  yOffset: numnber,
   path: Array<number>
+}
+
+export type KernSet = Array<Kern>
+
+export type Kern = {
+  from: number,
+  to: number,
+  amount: number
 }
 
 type Command = {
@@ -23,33 +32,50 @@ export default function buildFonts (fonts: Array<string>, out: string) {
   // prelude: build fonts
   fonts = fonts.map(font => opentype.loadSync(font))
   // step 1, build a glyph set
-  const glyphMap = buildGlyphSet(fonts)
+  const [glyphMap, kernSet] = buildGlyphSet(fonts)
   // step 2, build the pbf
-  const pbf = serialize(glyphMap)
+  const pbf = serialize(glyphMap, kernSet)
   // step 3, gzip compress and save
   fs.writeFileSync(out, gzipSync(pbf))
 }
 
 function buildGlyphSet (fonts: Array<Font>): Map {
-  const map = new Map()
+  const kernSet = []
+  const glyphMap = new Map()
+  const unicodeMap = new Map()
   for (const font of fonts) {
     const { unitsPerEm, glyphs, ascender, descender, kerningPairs } = font
-    console.log('kerningPairs', kerningPairs)
+    // glyph map
     for (const key in glyphs.glyphs) {
       const glyph = glyphs.glyphs[key]
-      const { unicode, advanceWidth } = glyph
-      if (unicode && !map.has(unicode)) {
+      const { unicode, index, advanceWidth } = glyph
+      if (unicode && !glyphMap.has(unicode)) {
         const [yOffset, path] = commandsToCode(glyph.getPath(0, 0, 1).commands)
-        map.set(unicode, {
+        glyphMap.set(unicode, {
           advanceWidth: Math.round(advanceWidth / unitsPerEm * 4096),
           yOffset,
           path
         })
+        unicodeMap.set(index, unicode)
       }
+    }
+    // kerning map
+    for (const kernKey in kerningPairs) {
+      const [from, to] = kernKey.split(',')
+      from = getUnicode(unicodeMap, +from)
+      to = getUnicode(unicodeMap, +to)
+      if (!from || !to) continue
+      const amount = Math.round(kerningPairs[kernKey] / unitsPerEm * 4096)
+      if (!amount) continue
+      kernSet.push({ from, to, amount })
     }
   }
 
-  return map
+  return [glyphMap, kernSet]
+}
+
+function getUnicode (unicodeMap: Set, index: number) {
+  if (unicodeMap.has(index)) return unicodeMap.get(index)
 }
 
 function commandsToCode (commands: Array<Command>): [number, Array<number>] {

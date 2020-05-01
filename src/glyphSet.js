@@ -1,9 +1,13 @@
 // @flow
 import Protobuf from 'pbf'
 import Glyph from './glyph'
+import { zagzig } from './zigzag'
+
+import type { KernSet, Kern } from './'
 
 export default class GlyphSet extends Map {
   version: number
+  kerningPairs: KernSet = {}
   constructor (data: Buffer, end?: number = 0) {
     super()
     this._buildGlyphs(data, end)
@@ -21,7 +25,22 @@ export default class GlyphSet extends Map {
       const glyph: Glyph = new Glyph(pbf, pbf.readVarint() + pbf.pos)
       glyphSet.set(glyph.unicode, glyph)
     } else if (tag === 2) {
-      // const kerning
+      const kerning: Kern = {}
+      pbf.readFields(readKerningPairs, kerning, pbf.readVarint() + pbf.pos)
+      const { from, to, amount } = kerning
+      if (!glyphSet.kerningPairs[from]) glyphSet.kerningPairs[from] = {}
+      glyphSet.kerningPairs[from][to] = amount
     }
   }
+
+  getKernPair (from: number, to: number): number {
+    const _from = this.kerningPairs[from]
+    return (_from && _from[to]) ? _from[to] : 0
+  }
+}
+
+function readKerningPairs (tag: number, kerning: Kern, pbf: Protobuf) {
+  if (tag === 1) kerning.from = pbf.readVarint()
+  else if (tag === 2) kerning.to = pbf.readVarint()
+  else if (tag === 3) kerning.amount = zagzig(pbf.readVarint()) / 4096
 }
