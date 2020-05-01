@@ -1,11 +1,13 @@
-// const buildFonts = require('./lib/buildFonts').default
+const buildFonts = require('./lib/buildFonts').default
 
 // buildFonts(['./testFonts/NotoSans-Regular.ttf'], './default.pbf')
 // buildFonts(['./testFonts/NotoSans-Regular.ttf', './testFonts/arial-unicode-ms.ttf'], './default.pbf')
+// buildFonts(['./testFonts/Roboto-Regular.ttf'], './RobotoRegular.pbf')
 // buildFonts(['./testFonts/Roboto-Medium.ttf'], './RobotoMedium.pbf')
+buildFonts(['./testFonts/Lato-Bold.ttf'], './LatoBold.pbf')
 
 
-
+// 352K	LatoBold.pbf
 
 
 
@@ -15,7 +17,8 @@ const zlib = require('zlib')
 
 const GlyphSet = require('./lib/glyphSet').default
 
-const pbf = zlib.gunzipSync(fs.readFileSync('./default.pbf'))
+// const pbf = zlib.gunzipSync(fs.readFileSync('./default.pbf'))
+const pbf = zlib.gunzipSync(fs.readFileSync('./RobotoMedium.pbf'))
 
 console.time('build')
 const glyphSet = new GlyphSet(pbf)
@@ -23,17 +26,21 @@ console.timeEnd('build')
 
 console.time('getCode')
 // const char = 'μή'.charCodeAt(0)
-const char = 9633
+const char = 'y'.charCodeAt(0)
+// const char = 'y'.charCodeAt(0)
+// const char = 9633
 // const a = 97
 const glyph = glyphSet.get(char)
 console.timeEnd('getCode')
 
 console.time('buildPath')
+const { yOffset } = glyph
 const { indices, vertices, quads } = glyph.getPath()
 console.timeEnd('buildPath')
 
 // console.log('getGlyph', getGlyph)
 
+console.log('yOffset', yOffset)
 console.log('quads', quads)
 console.log('indices', indices)
 console.log('vertices', vertices)

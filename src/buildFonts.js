@@ -33,16 +33,17 @@ export default function buildFonts (fonts: Array<string>, out: string) {
 function buildGlyphSet (fonts: Array<Font>): Map {
   const map = new Map()
   for (const font of fonts) {
-    const { unitsPerEm, glyphs } = font
+    const { unitsPerEm, glyphs, ascender, descender, kerningPairs } = font
+    console.log('kerningPairs', kerningPairs)
     for (const key in glyphs.glyphs) {
       const glyph = glyphs.glyphs[key]
       const { unicode, advanceWidth } = glyph
       if (unicode && !map.has(unicode)) {
-        // const path = commandsToCode(glyph.getPath(0, 0, 1).commands)
-        // if (unicode === 9633) console.log('path', glyph.getPath(0, 0, 1).commands, path)
+        const [yOffset, path] = commandsToCode(glyph.getPath(0, 0, 1).commands)
         map.set(unicode, {
           advanceWidth: Math.round(advanceWidth / unitsPerEm * 4096),
-          path: commandsToCode(glyph.getPath(0, 0, 1).commands)
+          yOffset,
+          path
         })
       }
     }
@@ -51,8 +52,9 @@ function buildGlyphSet (fonts: Array<Font>): Map {
   return map
 }
 
-function commandsToCode (commands: Array<Command>): Array<number> {
+function commandsToCode (commands: Array<Command>): [number, Array<number>] {
   let prevX, prevY, add
+  let yOffset = Infinity
   const path = []
   commands.forEach(command => {
     const { type, x, y, x1, y1, x2, y2 } = command
@@ -60,17 +62,21 @@ function commandsToCode (commands: Array<Command>): Array<number> {
     prevX = x
     prevY = y
     if (type === 'M') { // Move to
+      yOffset = Math.min(yOffset, Math.round(-y * 4096))
       path.push(0, Math.round(x * 4096), Math.round(-y * 4096))
     } else if (type === 'L') { // Line to
+      yOffset = Math.min(yOffset, Math.round(-y * 4096))
       if (!add) path.push(1, Math.round(x * 4096), Math.round(-y * 4096))
     } else if (type === 'C') { // Cubic Bezier
+      yOffset = Math.min(yOffset, Math.round(-y * 4096))
       if (!add) path.push(1, Math.round(x2 * 4096), Math.round(-y2 * 4096), Math.round(x1 * 4096), Math.round(-y1 * 4096), Math.round(x * 4096), Math.round(-y * 4096))
     } else if (type === 'Q') { // Quadratic Bezier
+      yOffset = Math.min(yOffset, Math.round(-y * 4096))
       if (!add) path.push(3, Math.round(x1 * 4096), Math.round(-y1 * 4096), Math.round(x * 4096), Math.round(-y * 4096))
     } else if (type === 'Z') { // finish
       path.push(4)
     }
   })
 
-  return path
+  return [yOffset, path]
 }

@@ -20,11 +20,12 @@ function writeGlyphs (glyphs: Array<Glyph>, pbf: Protobuf) {
 }
 
 function writeGlyph (glyph: Glyph, pbf: Protobuf) {
-  const [unicode, { advanceWidth, path }] = glyph
+  const [unicode, { advanceWidth, yOffset, path }] = glyph
 
   pbf.writeVarintField(1, unicode)
   pbf.writeVarintField(2, advanceWidth)
-  pbf.writeMessage(3, writePath, path)
+  pbf.writeVarintField(3, zigzag(yOffset))
+  pbf.writeMessage(4, writePath, path)
 }
 
 function writePath (path: Array<number>, pbf: Protobuf) {

@@ -33,6 +33,14 @@ buildFonts(['./testFonts/NotoSans-Regular.ttf', './testFonts/arial-unicode-ms.tt
 
 ```
 
+
+## MSDF Experiments
+
+* The total cost for all glyph data would be very high, but could be sent in pieces
+* Both cases should be in pieces
+
+`msdf-bmfont -o ./robotoMedium.png -f json -s 24 --smart-size ./testFonts/Roboto-Medium.ttf`
+
 ---
 
 ## ISC License (ISC)

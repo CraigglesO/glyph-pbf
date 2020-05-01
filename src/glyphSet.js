@@ -20,6 +20,8 @@ export default class GlyphSet extends Map {
     } else if (tag === 1) {
       const glyph: Glyph = new Glyph(pbf, pbf.readVarint() + pbf.pos)
       glyphSet.set(glyph.unicode, glyph)
+    } else if (tag === 2) {
+      // const kerning
     }
   }
 }
