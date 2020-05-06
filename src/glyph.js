@@ -4,6 +4,8 @@ import { zagzig } from './zigzag'
 
 type Path = Array<number> | { vertices: Array<number>, indices: Array<number>, quads: Array<number> }
 
+type Point = [number, number]
+
 /**
 Since we are drawing quads, there are 4 types
 polygons are all defined by type 0: [0, 1]
@@ -40,16 +42,18 @@ export default class Glyph {
     // get path code
     while (this._pbf.pos < end) path.push(zagzig(this._pbf.readVarint()))
     // if build, design a polygon, otherwise keep the commands
-    if (buildPath) return this._buildPath(path)
+    if (buildPath) return this._buildFill(path)
     else return path
   }
 
-  _buildPath (path: Array<number>): { vertices: Array<number>, indices: Array<number>, quads: Array<number> } {
+  _buildFill (path: Array<number>): { vertices: Array<number>, indices: Array<number>, quads: Array<number> } {
     const len = path.length
     const vertices = []
     const indices = []
     const quads = []
-    let command, x, y, x1, y1
+    const strokes = []
+    let stroke = []
+    let command, x, y, x1, y1, x0, y0
     let i = 0
     let anchorPos = 0
     let indexPos = -1
@@ -63,6 +67,7 @@ export default class Glyph {
         x = path[i++] / 4096
         y = path[i++] / 4096
         vertices.push(x, y, 0)
+        stroke.push([x, y])
         indexPos++
       }
       // MoveTo - start a triangle with its first two points
@@ -77,25 +82,41 @@ export default class Glyph {
         vertices.push(x, y, 1)
         indexPos++
         // get the new values
+        x0 = x
+        y0 = y
         x1 = path[i++] / 4096
         y1 = path[i++] / 4096
         x = path[i++] / 4096
         y = path[i++] / 4096
         // store vertices
         vertices.push(
-          x1, y1, 2, // the mid-quad vertices
-          x, y, 3, // the end-quad vertices
+          x1, y1, 2, // the control point vertices
+          x, y, 3, // the end vertices
           x, y, 0 // the next vertices in the polygon
         )
         // the first set of vertices added were the quad
         quads.push(indexPos++, indexPos++, indexPos++)
         // store the next part of the main polygon
         indices.push(indexPos, anchorPos, indexPos)
+
+        // build a stroke path using a few points
+        // https://stackoverflow.com/questions/5634460/quadratic-b%C3%A9zier-curve-calculate-points
+        // for (let v = 0; v <= 6; v++) {
+        //   const t = 1 - (v / 6)
+        //
+        //   stroke.push([
+        //     t * t * x0 + 2 * t * t * x1 + t * t * x,
+        //     t * t * y0 + 2 * t * t * y1 + t * t * y
+        //   ])
+        // }
+        stroke.push([x, y])
       } else if (command === 4) { // Close - finish the last triangle
         indices.push(anchorPos)
+        strokes.push(stroke)
+        stroke = []
       }
     }
 
-    return { indices, vertices, quads }
+    return { indices, vertices, quads, strokes }
   }
 }
