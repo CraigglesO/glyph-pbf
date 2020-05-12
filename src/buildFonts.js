@@ -129,16 +129,16 @@ function updateYOffset (code: Code): Code {
 
   while (i < len) {
     if (path[i] === 0) {
-      newPath.push(0, Math.round(-yOffset + path[i + 1]), Math.round(-yOffset + path[i + 2]))
+      newPath.push(0, Math.round(path[i + 1]), Math.round(-yOffset + path[i + 2]))
       i += 3
     } else if (path[i] === 1) {
-      newPath.push(1, Math.round(-yOffset + path[i + 1]), Math.round(-yOffset + path[i + 2]))
+      newPath.push(1, Math.round(path[i + 1]), Math.round(-yOffset + path[i + 2]))
       i += 3
     } else if (path[i] === 2) {
-      newPath.push(2, Math.round(-yOffset + path[i + 1]), Math.round(-yOffset + path[i + 2]), Math.round(-yOffset + path[i + 3]), Math.round(-yOffset + path[i + 4]), Math.round(-yOffset + path[i + 5]), Math.round(-yOffset + path[i + 6]))
+      newPath.push(2, Math.round(path[i + 1]), Math.round(-yOffset + path[i + 2]), Math.round(path[i + 3]), Math.round(-yOffset + path[i + 4]), Math.round(path[i + 5]), Math.round(-yOffset + path[i + 6]))
       i += 7
     } else if (path[i] === 3) {
-      newPath.push(3, Math.round(-yOffset + path[i + 1]), Math.round(-yOffset + path[i + 2]), Math.round(-yOffset + path[i + 3]), Math.round(-yOffset + path[i + 4]))
+      newPath.push(3, Math.round(path[i + 1]), Math.round(-yOffset + path[i + 2]), Math.round(path[i + 3]), Math.round(-yOffset + path[i + 4]))
       i += 5
     } else if (path[i] === 4) {
       newPath.push(4)
