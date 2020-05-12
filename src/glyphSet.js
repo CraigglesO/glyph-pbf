@@ -25,11 +25,12 @@ export default class GlyphSet extends Map {
       const glyph: Glyph = new Glyph(pbf, pbf.readVarint() + pbf.pos)
       glyphSet.set(glyph.unicode, glyph)
     } else if (tag === 2) {
-      const kerning: Kern = {}
-      pbf.readFields(readKerningPairs, kerning, pbf.readVarint() + pbf.pos)
-      const { from, to, amount } = kerning
-      if (!glyphSet.kerningPairs[from]) glyphSet.kerningPairs[from] = {}
-      glyphSet.kerningPairs[from][to] = amount
+      // TODO: Re-add kerning when it matters
+      // const kerning: Kern = {}
+      // pbf.readFields(readKerningPairs, kerning, pbf.readVarint() + pbf.pos)
+      // const { from, to, amount } = kerning
+      // if (!glyphSet.kerningPairs[from]) glyphSet.kerningPairs[from] = {}
+      // glyphSet.kerningPairs[from][to] = amount
     }
   }
 

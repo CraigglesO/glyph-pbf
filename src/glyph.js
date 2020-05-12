@@ -77,6 +77,8 @@ export default class Glyph {
       } else if (command === 1) { // LineTo - finish triangle and setup the next triangles first two points
         // finish a triangle, and start another
         indices.push(indexPos, anchorPos, indexPos)
+      } else if (command === 2) {
+        
       } else if (command === 3) { // Quadratic Bezier to
         // first restore x any y as a start-quad type
         vertices.push(x, y, 1)

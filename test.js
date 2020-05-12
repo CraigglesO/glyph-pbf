@@ -1,10 +1,14 @@
-// const buildFonts = require('./lib/buildFonts').default
+const buildFonts = require('./lib/buildFonts').default
 
 // buildFonts(['./testFonts/NotoSans-Regular.ttf'], './default.pbf')
 // buildFonts(['./testFonts/NotoSans-Regular.ttf', './testFonts/arial-unicode-ms.ttf'], './default.pbf')
-// buildFonts(['./testFonts/Roboto-Regular.ttf'], './RobotoRegular.pbf')
-// buildFonts(['./testFonts/Roboto-Medium.ttf'], './RobotoMedium.pbf')
-// buildFonts(['./testFonts/Lato-Bold.ttf'], './LatoBold.pbf')
+
+
+
+
+// buildFonts([{ path: './testFonts/Roboto-Regular.ttf', charset: ' !"#$%&\'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~' }], './RobotoRegular.pbf')
+// buildFonts([{ path: './testFonts/Roboto-Medium.ttf', charset: ' !"#$%&\'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~' }], './RobotoMedium.pbf')
+// buildFonts([{ path: './testFonts/Lato-Bold.ttf', charset: ' !"#$%&\'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~' }], './LatoBold.pbf')
 
 
 // 352K	LatoBold.pbf
@@ -19,8 +23,8 @@ const drawLine = require('line-gl').default
 
 const GlyphSet = require('./lib/glyphSet').default
 
-// const pbf = zlib.gunzipSync(fs.readFileSync('./default.pbf'))
-const pbf = zlib.gunzipSync(fs.readFileSync('./LatoBold.pbf'))
+const pbf = zlib.gunzipSync(fs.readFileSync('./default.pbf'))
+// const pbf = zlib.gunzipSync(fs.readFileSync('./LatoBold.pbf'))
 
 console.time('build')
 const glyphSet = new GlyphSet(pbf)
@@ -34,22 +38,25 @@ console.time('getCode')
 // const char = 'μή'.charCodeAt(0)
 // const char = 'a'.charCodeAt(0)
 // const char = 'T'.charCodeAt(0)
-const char = 'b'.charCodeAt(0)
+// const char = '死'.charCodeAt(0)
+const char = 'y'.charCodeAt(0)
+// const char = 469
 // const char = 9633
 // const a = 97
 const glyph = glyphSet.get(char)
 console.timeEnd('getCode')
 
 console.time('buildPath')
-// const { yOffset } = glyph
-let { indices, vertices, quads, strokes } = glyph.getPath()
+const { yOffset } = glyph
+const { indices, vertices, quads } = glyph.getPath()
 console.timeEnd('buildPath')
 
-console.log('strokes', strokes)
+// console.log('strokes', strokes)
 
 // console.log('getGlyph', getGlyph)
 
-// console.log('yOffset', yOffset)
+console.log('yOffset', yOffset)
+// console.log('glyph', glyph)
 // console.log('quads', quads)
 // console.log('indices', indices)
 // console.log('vertices', vertices)
@@ -112,37 +119,37 @@ fs.writeFileSync('./quad.json', JSON.stringify(featureCollection2, null, 2))
 
 
 
-const width = 0.04
-
-featureCollection = {
-  type: 'FeatureCollection',
-  features: []
-}
-
-strokes.forEach(stroke => {
-  const line = drawLine(stroke)
-  console.log('line', line)
-
-  for (let i = 0, il = line.indices.length; i < il; i += 3) {
-    const feature = {
-      type: 'Feature',
-      properties: {},
-      geometry: {
-        type: 'Polygon',
-        coordinates: [[
-          [line.vertices[line.indices[i] * 2] + width * line.normals[line.indices[i] * 2], line.vertices[line.indices[i] * 2 + 1] + width * line.normals[line.indices[i] * 2 + 1]],
-          [line.vertices[line.indices[i + 1] * 2] + width * line.normals[line.indices[i + 1] * 2], line.vertices[line.indices[i + 1] * 2 + 1] + width * line.normals[line.indices[i + 1] * 2 + 1]],
-          [line.vertices[line.indices[i + 2] * 2] + width * line.normals[line.indices[i + 2] * 2], line.vertices[line.indices[i + 2] * 2 + 1] + width * line.normals[line.indices[i + 2] * 2 + 1]],
-          [line.vertices[line.indices[i] * 2] + width * line.normals[line.indices[i] * 2], line.vertices[line.indices[i] * 2 + 1] + width * line.normals[line.indices[i] * 2 + 1]]
-        ]]
-      }
-    }
-
-    featureCollection.features.push(feature)
-  }
-})
-
-fs.writeFileSync('./strokes.json', JSON.stringify(featureCollection, null, 2))
+// const width = 0.04
+//
+// featureCollection = {
+//   type: 'FeatureCollection',
+//   features: []
+// }
+//
+// strokes.forEach(stroke => {
+//   const line = drawLine(stroke)
+//   console.log('line', line)
+//
+//   for (let i = 0, il = line.indices.length; i < il; i += 3) {
+//     const feature = {
+//       type: 'Feature',
+//       properties: {},
+//       geometry: {
+//         type: 'Polygon',
+//         coordinates: [[
+//           [line.vertices[line.indices[i] * 2] + width * line.normals[line.indices[i] * 2], line.vertices[line.indices[i] * 2 + 1] + width * line.normals[line.indices[i] * 2 + 1]],
+//           [line.vertices[line.indices[i + 1] * 2] + width * line.normals[line.indices[i + 1] * 2], line.vertices[line.indices[i + 1] * 2 + 1] + width * line.normals[line.indices[i + 1] * 2 + 1]],
+//           [line.vertices[line.indices[i + 2] * 2] + width * line.normals[line.indices[i + 2] * 2], line.vertices[line.indices[i + 2] * 2 + 1] + width * line.normals[line.indices[i + 2] * 2 + 1]],
+//           [line.vertices[line.indices[i] * 2] + width * line.normals[line.indices[i] * 2], line.vertices[line.indices[i] * 2 + 1] + width * line.normals[line.indices[i] * 2 + 1]]
+//         ]]
+//       }
+//     }
+//
+//     featureCollection.features.push(feature)
+//   }
+// })
+//
+// fs.writeFileSync('./strokes.json', JSON.stringify(featureCollection, null, 2))
 
 
 
