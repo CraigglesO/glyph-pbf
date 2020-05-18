@@ -22,16 +22,15 @@ function writeGlyphs (glyphs: Map, kernSet: KernSet, pbf: Protobuf) {
 }
 
 function writeGlyph (glyph: Glyph, pbf: Protobuf) {
-  const [unicode, { advanceWidth, yOffset, path }] = glyph
+  const [unicode, { advanceWidth, path }] = glyph
 
   pbf.writeVarintField(1, unicode)
   pbf.writeVarintField(2, advanceWidth)
-  pbf.writeVarintField(3, zigzag(yOffset))
-  pbf.writeMessage(4, writePath, path)
+  pbf.writeMessage(3, writePath, path)
 }
 
 function writePath (path: Array<number>, pbf: Protobuf) {
-  for (const num of path) pbf.writeVarint(zigzag(num))
+  for (const num of path) pbf.writeVarint(num)
 }
 
 function writeKernings (kern: Kern, pbf: Protobuf) {

@@ -17,7 +17,6 @@ the end of a quad is defined by type 3: [1, 1]
 export default class Glyph {
   unicode: number
   advanceWidth: number
-  yOffset: number
   path: Path
   _path: number
   constructor (pbf: Protobuf, end: number) {
@@ -28,8 +27,7 @@ export default class Glyph {
   readGlyph (tag: number, glyph: Glyph, pbf: Protobuf) {
     if (tag === 1) glyph.unicode = pbf.readVarint()
     else if (tag === 2) glyph.advanceWidth = pbf.readVarint() / 4096
-    else if (tag === 3) glyph.yOffset = zagzig(pbf.readVarint()) / 4096
-    else if (tag === 4) glyph._path = pbf.pos
+    else if (tag === 3) glyph._path = pbf.pos
   }
 
   getPath (buildPath: boolean = true): Path {
@@ -40,7 +38,7 @@ export default class Glyph {
     // prep path object
     const path = []
     // get path code
-    while (this._pbf.pos < end) path.push(zagzig(this._pbf.readVarint()))
+    while (this._pbf.pos < end) path.push(this._pbf.readVarint())
     // if build, design a polygon, otherwise keep the commands
     if (buildPath) return this._buildFill(path)
     else return path
@@ -78,7 +76,7 @@ export default class Glyph {
         // finish a triangle, and start another
         indices.push(indexPos, anchorPos, indexPos)
       } else if (command === 2) {
-        
+
       } else if (command === 3) { // Quadratic Bezier to
         // first restore x any y as a start-quad type
         vertices.push(x, y, 1)

@@ -50,26 +50,36 @@ function buildGlyphSet (fonts: Array<Font>): Map {
   const kernSet = []
   const glyphMap = new Map()
   const unicodeMap = new Map()
+  let fontMinY = Infinity
   for (const font of fonts) {
     const { data, charset } = font
     const { unitsPerEm, glyphs, ascender, descender, kerningPairs } = data
     // glyph map
     for (const key in glyphs.glyphs) {
       const glyph = glyphs.glyphs[key]
+      if (glyph.index >= 50000) break
       const { unicode, index, advanceWidth } = glyph
       if (unicode && !glyphMap.has(unicode) && (!charset || charset.includes(String.fromCharCode(unicode)))) {
         let code = commandsToCode(glyph.getPath(0, 0, 1).commands)
-        if (code.yOffset < 0) code = updateYOffset(code)
-        if (code.maxY > 4096) code = rescaleCode(code)
-        const { yOffset, maxY, scale, path } = code
+        const { yOffset, yMax, path } = code
+        fontMinY = Math.min(fontMinY, yOffset)
         glyphMap.set(unicode, {
-          advanceWidth: Math.round(advanceWidth / unitsPerEm * 4096 * scale),
-          yOffset,
+          advanceWidth: Math.round(advanceWidth / unitsPerEm * 4096),
+          yMax,
           path
         })
         unicodeMap.set(index, unicode)
       }
     }
+
+    console.log('a')
+
+    // shift all glyphs by the font's minY
+    const scale = 4096 / (4096 - fontMinY)
+    for (const [unicode, glyph] of glyphMap) updateYOffsetAndScale(glyph, fontMinY, scale)
+
+    console.log('b')
+
     // kerning map
     for (const kernKey in kerningPairs) {
       const [from, to] = kernKey.split(',')
@@ -80,6 +90,8 @@ function buildGlyphSet (fonts: Array<Font>): Map {
       if (!amount) continue
       kernSet.push({ from, to, amount })
     }
+
+    console.log('c')
   }
 
   return [glyphMap, kernSet]
@@ -92,7 +104,7 @@ function getUnicode (unicodeMap: Set, index: number) {
 function commandsToCode (commands: Array<Command>): Code {
   let prevX: number, prevY: number, add: number, yVal: number
   let yOffset: number = Infinity
-  let maxY: number = -Infinity
+  let yMax: number = -Infinity
   const path = []
   commands.forEach(command => {
     const { type, x, y, x1, y1, x2, y2 } = command
@@ -102,7 +114,7 @@ function commandsToCode (commands: Array<Command>): Code {
     if (type !== 'Z') {
       yVal = Math.round(-y * 4096)
       yOffset = Math.min(yOffset, yVal)
-      maxY = Math.max(maxY, yVal)
+      yMax = Math.max(yMax, yVal)
     }
     if (type === 'M') { // Move to
       path.push(0, Math.round(x * 4096), Math.round(-y * 4096))
@@ -117,28 +129,28 @@ function commandsToCode (commands: Array<Command>): Code {
     }
   })
 
-  return { yOffset, maxY, path, scale: 1 }
+  return { yOffset, yMax, path }
 }
 
 // If yOffset is below 0, we move the path data up by yOffset
-function updateYOffset (code: Code): Code {
-  const { yOffset, path } = code
+function updateYOffsetAndScale (glyph, fontOffset: number, scale: number) {
+  const { path } = glyph
   const newPath = []
   let i = 0
   let len = path.length
 
   while (i < len) {
     if (path[i] === 0) {
-      newPath.push(0, Math.round(path[i + 1]), Math.round(-yOffset + path[i + 2]))
+      newPath.push(0, Math.round((path[i + 1]) * scale), Math.round((-fontOffset + path[i + 2]) * scale))
       i += 3
     } else if (path[i] === 1) {
-      newPath.push(1, Math.round(path[i + 1]), Math.round(-yOffset + path[i + 2]))
+      newPath.push(1, Math.round((path[i + 1]) * scale), Math.round((-fontOffset + path[i + 2]) * scale))
       i += 3
     } else if (path[i] === 2) {
-      newPath.push(2, Math.round(path[i + 1]), Math.round(-yOffset + path[i + 2]), Math.round(path[i + 3]), Math.round(-yOffset + path[i + 4]), Math.round(path[i + 5]), Math.round(-yOffset + path[i + 6]))
+      newPath.push(2, Math.round((path[i + 1]) * scale), Math.round((-fontOffset + path[i + 2]) * scale), Math.round((path[i + 3]) * scale), Math.round((-fontOffset + path[i + 4]) * scale), Math.round((path[i + 5]) * scale), Math.round((-fontOffset + path[i + 6]) * scale))
       i += 7
     } else if (path[i] === 3) {
-      newPath.push(3, Math.round(path[i + 1]), Math.round(-yOffset + path[i + 2]), Math.round(path[i + 3]), Math.round(-yOffset + path[i + 4]))
+      newPath.push(3, Math.round((path[i + 1]) * scale), Math.round((-fontOffset + path[i + 2]) * scale), Math.round((path[i + 3]) * scale), Math.round((-fontOffset + path[i + 4]) * scale))
       i += 5
     } else if (path[i] === 4) {
       newPath.push(4)
@@ -146,9 +158,9 @@ function updateYOffset (code: Code): Code {
     }
   }
 
-  code.path = newPath
-
-  return code
+  glyph.path = newPath
+  glyph.advanceWidth = Math.round(glyph.advanceWidth * scale)
+  glyph.yMax = Math.round(glyph.yMax * scale)
 }
 
 // If the maxY is greater than 1, we update.

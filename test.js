@@ -3,12 +3,13 @@ const buildFonts = require('./lib/buildFonts').default
 // buildFonts(['./testFonts/NotoSans-Regular.ttf'], './default.pbf')
 
 // buildFonts([{ path: './testFonts/NotoSans-Regular.ttf' }, { path: './testFonts/arial-unicode-ms.ttf' }], './default.pbf')
-
+// buildFonts([{ path: './testFonts/arial-unicode-ms.ttf' }], './default.pbf')
 
 // buildFonts([{ path: './testFonts/Roboto-Regular.ttf', charset: ' !"#$%&\'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~' }], './RobotoRegular.pbf')
 // buildFonts([{ path: './testFonts/Roboto-Medium.ttf', charset: ' !"#$%&\'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~' }], './RobotoMedium.pbf')
-buildFonts([{ path: './testFonts/Lato-Bold.ttf', charset: ' !"#$%&\'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~' }], './LatoBold.pbf')
-
+// buildFonts([{ path: './testFonts/Roboto-Regular.ttf' }], './RobotoRegular.pbf')
+// buildFonts([{ path: './testFonts/Roboto-Medium.ttf' }], './RobotoMedium.pbf')
+// buildFonts([{ path: './testFonts/Lato-Bold.ttf', charset: ' !"#$%&\'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~' }], './LatoBold.pbf')
 
 // 352K	LatoBold.pbf
 // 380K LatoBold.pbf with kerningPairs
@@ -38,7 +39,7 @@ console.time('getCode')
 // const char = 'a'.charCodeAt(0)
 // const char = 'T'.charCodeAt(0)
 // const char = '死'.charCodeAt(0)
-const char = 'y'.charCodeAt(0)
+const char = 'Q'.charCodeAt(0)
 // const char = 469
 // const char = 9633
 // const a = 97
@@ -46,7 +47,6 @@ const glyph = glyphSet.get(char)
 console.timeEnd('getCode')
 
 console.time('buildPath')
-const { yOffset } = glyph
 const { indices, vertices, quads } = glyph.getPath()
 console.timeEnd('buildPath')
 
@@ -54,7 +54,6 @@ console.timeEnd('buildPath')
 
 // console.log('getGlyph', getGlyph)
 
-console.log('yOffset', yOffset)
 // console.log('glyph', glyph)
 // console.log('quads', quads)
 // console.log('indices', indices)
