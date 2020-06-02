@@ -15,7 +15,7 @@ the end of a quad is defined by type 3: [1, 1]
 **/
 
 export default class Glyph {
-  unicode: number
+  char: string
   advanceWidth: number
   path: Path
   _path: number
@@ -25,7 +25,7 @@ export default class Glyph {
   }
 
   readGlyph (tag: number, glyph: Glyph, pbf: Protobuf) {
-    if (tag === 1) glyph.unicode = pbf.readVarint()
+    if (tag === 1) glyph.char = String.fromCharCode(pbf.readVarint())
     else if (tag === 2) glyph.advanceWidth = pbf.readVarint() / 4096
     else if (tag === 3) glyph._path = pbf.pos
   }
@@ -75,7 +75,7 @@ export default class Glyph {
       } else if (command === 1) { // LineTo - finish triangle and setup the next triangles first two points
         // finish a triangle, and start another
         indices.push(indexPos, anchorPos, indexPos)
-      } else if (command === 2) {
+      } else if (command === 2) { // Cubic Bezier (Not supported)
 
       } else if (command === 3) { // Quadratic Bezier to
         // first restore x any y as a start-quad type
@@ -101,15 +101,15 @@ export default class Glyph {
 
         // build a stroke path using a few points
         // https://stackoverflow.com/questions/5634460/quadratic-b%C3%A9zier-curve-calculate-points
-        // for (let v = 0; v <= 6; v++) {
-        //   const t = 1 - (v / 6)
-        //
-        //   stroke.push([
-        //     t * t * x0 + 2 * t * t * x1 + t * t * x,
-        //     t * t * y0 + 2 * t * t * y1 + t * t * y
-        //   ])
-        // }
-        stroke.push([x, y])
+        for (let v = 0; v <= 6; v++) {
+          const t = v / 6
+          const subT = 1 - t
+
+          stroke.push([
+            subT * subT * x0 + 2 * subT * t * x1 + t * t * x,
+            subT * subT * y0 + 2 * subT * t * y1 + t * t * y
+          ])
+        }
       } else if (command === 4) { // Close - finish the last triangle
         indices.push(anchorPos)
         strokes.push(stroke)

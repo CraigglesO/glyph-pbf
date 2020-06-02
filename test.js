@@ -1,4 +1,4 @@
-const buildFonts = require('./lib/buildFonts').default
+// const buildFonts = require('./lib/buildFonts').default
 
 // buildFonts(['./testFonts/NotoSans-Regular.ttf'], './default.pbf')
 
@@ -39,15 +39,15 @@ console.time('getCode')
 // const char = 'a'.charCodeAt(0)
 // const char = 'T'.charCodeAt(0)
 // const char = '死'.charCodeAt(0)
-const char = 'Q'.charCodeAt(0)
+// const char = 'a'.charCodeAt(0)
 // const char = 469
 // const char = 9633
-// const a = 97
-const glyph = glyphSet.get(char)
+const a = 'a'
+const glyph = glyphSet.get(a)
 console.timeEnd('getCode')
 
 console.time('buildPath')
-const { indices, vertices, quads } = glyph.getPath()
+const { indices, vertices, quads, strokes } = glyph.getPath()
 console.timeEnd('buildPath')
 
 // console.log('strokes', strokes)
@@ -117,40 +117,105 @@ fs.writeFileSync('./quad.json', JSON.stringify(featureCollection2, null, 2))
 
 
 
-// const width = 0.04
-//
-// featureCollection = {
-//   type: 'FeatureCollection',
-//   features: []
-// }
-//
-// strokes.forEach(stroke => {
-//   const line = drawLine(stroke)
-//   console.log('line', line)
-//
-//   for (let i = 0, il = line.indices.length; i < il; i += 3) {
-//     const feature = {
-//       type: 'Feature',
-//       properties: {},
-//       geometry: {
-//         type: 'Polygon',
-//         coordinates: [[
-//           [line.vertices[line.indices[i] * 2] + width * line.normals[line.indices[i] * 2], line.vertices[line.indices[i] * 2 + 1] + width * line.normals[line.indices[i] * 2 + 1]],
-//           [line.vertices[line.indices[i + 1] * 2] + width * line.normals[line.indices[i + 1] * 2], line.vertices[line.indices[i + 1] * 2 + 1] + width * line.normals[line.indices[i + 1] * 2 + 1]],
-//           [line.vertices[line.indices[i + 2] * 2] + width * line.normals[line.indices[i + 2] * 2], line.vertices[line.indices[i + 2] * 2 + 1] + width * line.normals[line.indices[i + 2] * 2 + 1]],
-//           [line.vertices[line.indices[i] * 2] + width * line.normals[line.indices[i] * 2], line.vertices[line.indices[i] * 2 + 1] + width * line.normals[line.indices[i] * 2 + 1]]
-//         ]]
-//       }
-//     }
-//
-//     featureCollection.features.push(feature)
-//   }
-// })
-//
-// fs.writeFileSync('./strokes.json', JSON.stringify(featureCollection, null, 2))
+const width = 0.02
+
+featureCollection = {
+  type: 'FeatureCollection',
+  features: []
+}
+
+strokes.forEach(stroke => {
+  const data = drawLine(stroke)
+  const { prev, curr, next } = data
+  // console.log('line', line)
+
+  for (let i = 0, pl = curr.length; i < pl; i += 2) {
+    // grab the variables
+    const currX = curr[i]
+    const currY = curr[i + 1]
+    const nextX = next[i]
+    const nextY = next[i + 1]
+    const prevX = prev[i]
+    const prevY = prev[i + 1]
+
+    // step 1: find the normal
+    let dx = nextX - currX
+    let dy = nextY - currY
+    let mag = Math.sqrt(dx * dx + dy * dy)
+    let currNormal = mag ? [-dy / mag, dx / mag] : [0, 0]
+
+    // step 2: draw the quad
+    let feature = {
+      type: 'Feature',
+      properties: {},
+      geometry: {
+        type: 'Polygon',
+        coordinates: [[
+          [currX + width * currNormal[0] * -1, currY + width * currNormal[1] * -1],
+          [nextX + width * currNormal[0] * -1, nextY + width * currNormal[1] * -1],
+          [nextX + width * currNormal[0] * 1, nextY + width * currNormal[1] * 1],
+          [currX + width * currNormal[0] * -1, currY + width * currNormal[1] * -1]
+        ]]
+      }
+    }
+
+    featureCollection.features.push(feature)
+
+    feature = {
+      type: 'Feature',
+      properties: {},
+      geometry: {
+        type: 'Polygon',
+        coordinates: [[
+          [currX + width * currNormal[0] * -1, currY + width * currNormal[1] * -1],
+          [nextX + width * currNormal[0] * 1, nextY + width * currNormal[1] * 1],
+          [currX + width * currNormal[0] * 1, currY + width * currNormal[1] * 1],
+          [currX + width * currNormal[0] * -1, currY + width * currNormal[1] * -1]
+        ]]
+      }
+    }
+
+    featureCollection.features.push(feature)
+
+    // find current points prev normal
+    dx = currX - prevX
+    dy = currY - prevY
+    mag = Math.sqrt(dx * dx + dy * dy)
+    let prevNormal = mag ? [-dy / mag, dx / mag] : [0, 0]
+
+    if (isCCW([prevX, prevY], [currX, currY], [nextX, nextY])) {
+      prevNormal = [-prevNormal[0], -prevNormal[1]]
+      currNormal = [-currNormal[0], -currNormal[1]]
+    }
+
+    if (!(currX === prevX && currY === prevY)) {
+      feature = {
+        type: 'Feature',
+        properties: {},
+        geometry: {
+          type: 'Polygon',
+          coordinates: [[
+            [currX, currY],
+            [currX + width * currNormal[0] * 1, currY + width * currNormal[1] * 1],
+            [currX + width * prevNormal[0] * 1, currY + width * prevNormal[1] * 1],
+            [currX, currY]
+          ]]
+        }
+      }
+
+      featureCollection.features.push(feature)
+    }
+  }
+})
+
+fs.writeFileSync('./strokes.json', JSON.stringify(featureCollection, null, 2))
 
 
+function isCCW (p1, p2, p3) {
+  const val = (p2[1] - p1[1]) * (p3[0] - p2[0]) - (p2[0] - p1[0]) * (p3[1] - p2[1])
 
+  return val < 0
+}
 
 
 

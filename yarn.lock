@@ -2236,10 +2236,10 @@ levn@^0.3.0, levn@~0.3.0:
     prelude-ls "~1.1.2"
     type-check "~0.3.2"
 
-line-gl@^1.2.2:
-  version "1.2.2"
-  resolved "https://registry.yarnpkg.com/line-gl/-/line-gl-1.2.2.tgz#484f2e38fd8221b0626f1cfc61b979c33bca0cfb"
-  integrity sha512-kYL9KjmlHBS7XHCtU8coH/38MrhEb6vgjg3AXh3A+qA0YBbaU19JmQ+f5dJUUgx7X2rhiQvMJ8mK7ALtc4yd8Q==
+line-gl@^2.1.2:
+  version "2.1.2"
+  resolved "https://registry.yarnpkg.com/line-gl/-/line-gl-2.1.2.tgz#fcb5b9e7a749e2f5230ef1a1d42e2fc27620b0a7"
+  integrity sha512-u/GdZEkPq350+MAgb8U1VMweJuuVUNQ1oubq7E+cFtdlHmDupxfWiAQJWMuRjoLXlOve3QTcjqUMeSTdMQ4hRQ==
 
 load-json-file@^2.0.0:
   version "2.0.0"

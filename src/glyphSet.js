@@ -23,7 +23,7 @@ export default class GlyphSet extends Map {
       glyphSet.version = pbf.readVarint()
     } else if (tag === 1) {
       const glyph: Glyph = new Glyph(pbf, pbf.readVarint() + pbf.pos)
-      glyphSet.set(glyph.unicode, glyph)
+      glyphSet.set(glyph.char, glyph)
     } else if (tag === 2) {
       // TODO: Re-add kerning when it matters
       // const kerning: Kern = {}
@@ -40,8 +40,8 @@ export default class GlyphSet extends Map {
   }
 }
 
-function readKerningPairs (tag: number, kerning: Kern, pbf: Protobuf) {
-  if (tag === 1) kerning.from = pbf.readVarint()
-  else if (tag === 2) kerning.to = pbf.readVarint()
-  else if (tag === 3) kerning.amount = zagzig(pbf.readVarint()) / 4096
-}
+// function readKerningPairs (tag: number, kerning: Kern, pbf: Protobuf) {
+//   if (tag === 1) kerning.from = pbf.readVarint()
+//   else if (tag === 2) kerning.to = pbf.readVarint()
+//   else if (tag === 3) kerning.amount = zagzig(pbf.readVarint()) / 4096
+// }
