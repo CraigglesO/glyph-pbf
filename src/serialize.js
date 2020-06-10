@@ -30,7 +30,7 @@ function writeGlyph (glyph: Glyph, pbf: Protobuf) {
 }
 
 function writePath (path: Array<number>, pbf: Protobuf) {
-  for (const num of path) pbf.writeVarint(num)
+  for (const num of path) pbf.writeVarint(zigzag(num))
 }
 
 function writeKernings (kern: Kern, pbf: Protobuf) {

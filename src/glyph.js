@@ -2,7 +2,7 @@
 import Protobuf from 'pbf'
 import { zagzig } from './zigzag'
 
-type Path = Array<number> | { vertices: Array<number>, indices: Array<number>, quads: Array<number> }
+type Path = Array<number> | { vertices: Array<number>, indices: Array<number>, quads: Array<number>, strokes: Array<Array<number>> }
 
 type Point = [number, number]
 
@@ -38,13 +38,13 @@ export default class Glyph {
     // prep path object
     const path = []
     // get path code
-    while (this._pbf.pos < end) path.push(this._pbf.readVarint())
+    while (this._pbf.pos < end) path.push(zagzig(this._pbf.readVarint()))
     // if build, design a polygon, otherwise keep the commands
     if (buildPath) return this._buildFill(path)
     else return path
   }
 
-  _buildFill (path: Array<number>): { vertices: Array<number>, indices: Array<number>, quads: Array<number> } {
+  _buildFill (path: Array<number>): Path {
     const len = path.length
     const vertices = []
     const indices = []

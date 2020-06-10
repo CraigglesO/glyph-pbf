@@ -29,7 +29,7 @@ import buildFonts from 'glyph-pbf/buildFonts'
 const buildFonts = require('glyph-pbf/buildFonts').default
 
 // buildFonts([inputFile, inputFile], outputFileName)
-buildFonts(['./testFonts/NotoSans-Regular.ttf', './testFonts/arial-unicode-ms.ttf'], './default.pbf')
+buildFonts([{ path: './testFonts/NotoSans-Regular.ttf' }, { path: './testFonts/arial-unicode-ms.ttf' }], './default.pbf')
 
 ```
 

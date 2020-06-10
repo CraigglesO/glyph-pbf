@@ -1,4 +1,4 @@
-// const buildFonts = require('./lib/buildFonts').default
+const buildFonts = require('./lib/buildFonts').default
 
 // buildFonts(['./testFonts/NotoSans-Regular.ttf'], './default.pbf')
 
@@ -10,9 +10,25 @@
 // buildFonts([{ path: './testFonts/Roboto-Regular.ttf' }], './RobotoRegular.pbf')
 // buildFonts([{ path: './testFonts/Roboto-Medium.ttf' }], './RobotoMedium.pbf')
 // buildFonts([{ path: './testFonts/Lato-Bold.ttf', charset: ' !"#$%&\'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~' }], './LatoBold.pbf')
+buildFonts([{ path: './testFonts/Lato-Bold.ttf' }], './LatoBold.pbf')
 
 // 352K	LatoBold.pbf
 // 380K LatoBold.pbf with kerningPairs
+
+// building glyph roboto-medium:é
+// Object { advanceWidth: 0.422119140625, bbox: (4) […] }
+// 1.48b2ad6b.chunk.worker.js:24756:13
+// building glyph default:皖
+// Object { advanceWidth: 0.778076171875, bbox: (4) […] }
+// 1.48b2ad6b.chunk.worker.js:24756:13
+// building glyph roboto-medium:í
+// Object { advanceWidth: 0.206787109375, bbox: (4) […] }
+
+// building glyph default:ر
+// Object { advanceWidth: 0.327392578125, bbox: (4) […] }
+// 1.48b2ad6b.chunk.worker.js:24756:13
+// building glyph default:赣
+// Object { advanceWidth: 0.778076171875, bbox: (4) […] }
 
 
 
@@ -42,8 +58,8 @@ console.time('getCode')
 // const char = 'a'.charCodeAt(0)
 // const char = 469
 // const char = 9633
-const a = 'a'
-const glyph = glyphSet.get(a)
+// const a = 'a'
+const glyph = glyphSet.get('ر')
 console.timeEnd('getCode')
 
 console.time('buildPath')
