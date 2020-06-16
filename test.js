@@ -1,16 +1,47 @@
-const buildFonts = require('./lib/buildFonts').default
+const fs = require('fs')
+// const buildFonts = require('./lib/buildFonts').default
+// const charset = fs.readFileSync('./charset2.txt', 'utf8')
+//
+// const fonts = [
+//   './testFonts/NotoSans-Regular.ttf',
+//   './testFonts/NotoSansTifinagh-Regular.ttf',
+//   './testFonts/NotoSansEthiopic-Regular.ttf',
+//   './testFonts/NotoSansMyanmar-Regular.ttf',
+//   './testFonts/NotoSansKhmer-Regular.ttf',
+//   './testFonts/NotoSansMongolian-Regular.ttf',
+//   './testFonts/NotoSansCanadianAboriginal-Regular.ttf',
+//   './testFonts/NotoSansNKo-Regular.ttf',
+//   './testFonts/NotoSansArmenian-Regular.ttf',
+//   './testFonts/NotoSansHebrew-Regular.ttf',
+//   './testFonts/NotoSansKannada-Regular.ttf',
+//   './testFonts/NotoSansThai-Regular.ttf',
+//   // './testFonts/NotoSansArabicUI-Regular.ttf',
+//   './testFonts/NotoSansLao-Regular.ttf',
+//   './testFonts/NotoSansGeorgian-Regular.ttf',
+//   './testFonts/NotoSansTibetan-Regular.ttf',
+//   './testFonts/NotoSansTamil-Regular.ttf',
+//   './testFonts/NotoSansTelugu-Regular.ttf',
+//   './testFonts/NotoSansBengali-Regular.ttf',
+//   './testFonts/NotoSansDevanagari-Regular.ttf',
+//   './testFonts/NotoSansMalayalam-Regular.ttf',
+//   // './testFonts/NotoSansCJKtc-Regular.ttf',
+//   './testFonts/arial-unicode-ms.ttf'
+// ]
+//
+// buildFonts(fonts.map(font => { return { path: font, charset } }), './default.pbf')
 
 // buildFonts(['./testFonts/NotoSans-Regular.ttf'], './default.pbf')
 
 // buildFonts([{ path: './testFonts/NotoSans-Regular.ttf' }, { path: './testFonts/arial-unicode-ms.ttf' }], './default.pbf')
 // buildFonts([{ path: './testFonts/arial-unicode-ms.ttf' }], './default.pbf')
+// buildFonts([{ path: './testFonts/arial-unicode-ms.ttf', charset }], './default.pbf')
 
 // buildFonts([{ path: './testFonts/Roboto-Regular.ttf', charset: ' !"#$%&\'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~' }], './RobotoRegular.pbf')
 // buildFonts([{ path: './testFonts/Roboto-Medium.ttf', charset: ' !"#$%&\'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~' }], './RobotoMedium.pbf')
-// buildFonts([{ path: './testFonts/Roboto-Regular.ttf' }], './RobotoRegular.pbf')
-// buildFonts([{ path: './testFonts/Roboto-Medium.ttf' }], './RobotoMedium.pbf')
+// buildFonts([{ path: './testFonts/Roboto-Regular.ttf', charset }], './RobotoRegular.pbf')
+// buildFonts([{ path: './testFonts/Roboto-Medium.ttf', charset }], './RobotoMedium.pbf')
 // buildFonts([{ path: './testFonts/Lato-Bold.ttf', charset: ' !"#$%&\'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~' }], './LatoBold.pbf')
-buildFonts([{ path: './testFonts/Lato-Bold.ttf' }], './LatoBold.pbf')
+// buildFonts([{ path: './testFonts/Lato-Bold.ttf', charset }], './LatoBold.pbf')
 
 // 352K	LatoBold.pbf
 // 380K LatoBold.pbf with kerningPairs
@@ -33,14 +64,15 @@ buildFonts([{ path: './testFonts/Lato-Bold.ttf' }], './LatoBold.pbf')
 
 
 
-const fs = require('fs')
+// const fs = require('fs')
 const zlib = require('zlib')
 const drawLine = require('line-gl').default
 
 const GlyphSet = require('./lib/glyphSet').default
 
-const pbf = zlib.gunzipSync(fs.readFileSync('./default.pbf'))
+// const pbf = zlib.gunzipSync(fs.readFileSync('./default.pbf'))
 // const pbf = zlib.gunzipSync(fs.readFileSync('./LatoBold.pbf'))
+const pbf = zlib.gunzipSync(fs.readFileSync('./RobotoMedium.pbf'))
 
 console.time('build')
 const glyphSet = new GlyphSet(pbf)
@@ -59,7 +91,10 @@ console.time('getCode')
 // const char = 469
 // const char = 9633
 // const a = 'a'
-const glyph = glyphSet.get('ر')
+const glyph = glyphSet.get('T')
+console.log('glyph', glyph)
+// const glyph = glyphSet.get('ر')
+// const glyph = glyphSet.get('ൽ')
 console.timeEnd('getCode')
 
 console.time('buildPath')
@@ -128,12 +163,12 @@ for (let i = 0, il = quads.length; i < il; i += 3) {
 fs.writeFileSync('./quad.json', JSON.stringify(featureCollection2, null, 2))
 
 
+// console.log('strokes', strokes)
 
 
 
 
-
-const width = 0.02
+// const width = 0.02
 
 featureCollection = {
   type: 'FeatureCollection',
@@ -141,97 +176,30 @@ featureCollection = {
 }
 
 strokes.forEach(stroke => {
-  const data = drawLine(stroke)
-  const { prev, curr, next } = data
-  // console.log('line', line)
+  for (let i = 0, sl = stroke.length; i < sl; i += 3) {
+    const v0 = stroke[i]
+    const v1 = stroke[i + 1]
+    const v2 = stroke[i + 2]
 
-  for (let i = 0, pl = curr.length; i < pl; i += 2) {
-    // grab the variables
-    const currX = curr[i]
-    const currY = curr[i + 1]
-    const nextX = next[i]
-    const nextY = next[i + 1]
-    const prevX = prev[i]
-    const prevY = prev[i + 1]
-
-    // step 1: find the normal
-    let dx = nextX - currX
-    let dy = nextY - currY
-    let mag = Math.sqrt(dx * dx + dy * dy)
-    let currNormal = mag ? [-dy / mag, dx / mag] : [0, 0]
-
-    // step 2: draw the quad
-    let feature = {
+    const feature = {
       type: 'Feature',
       properties: {},
       geometry: {
         type: 'Polygon',
         coordinates: [[
-          [currX + width * currNormal[0] * -1, currY + width * currNormal[1] * -1],
-          [nextX + width * currNormal[0] * -1, nextY + width * currNormal[1] * -1],
-          [nextX + width * currNormal[0] * 1, nextY + width * currNormal[1] * 1],
-          [currX + width * currNormal[0] * -1, currY + width * currNormal[1] * -1]
+          v0.pos,
+          v1.pos,
+          v2.pos,
+          v0.pos
         ]]
       }
     }
 
     featureCollection.features.push(feature)
-
-    feature = {
-      type: 'Feature',
-      properties: {},
-      geometry: {
-        type: 'Polygon',
-        coordinates: [[
-          [currX + width * currNormal[0] * -1, currY + width * currNormal[1] * -1],
-          [nextX + width * currNormal[0] * 1, nextY + width * currNormal[1] * 1],
-          [currX + width * currNormal[0] * 1, currY + width * currNormal[1] * 1],
-          [currX + width * currNormal[0] * -1, currY + width * currNormal[1] * -1]
-        ]]
-      }
-    }
-
-    featureCollection.features.push(feature)
-
-    // find current points prev normal
-    dx = currX - prevX
-    dy = currY - prevY
-    mag = Math.sqrt(dx * dx + dy * dy)
-    let prevNormal = mag ? [-dy / mag, dx / mag] : [0, 0]
-
-    if (isCCW([prevX, prevY], [currX, currY], [nextX, nextY])) {
-      prevNormal = [-prevNormal[0], -prevNormal[1]]
-      currNormal = [-currNormal[0], -currNormal[1]]
-    }
-
-    if (!(currX === prevX && currY === prevY)) {
-      feature = {
-        type: 'Feature',
-        properties: {},
-        geometry: {
-          type: 'Polygon',
-          coordinates: [[
-            [currX, currY],
-            [currX + width * currNormal[0] * 1, currY + width * currNormal[1] * 1],
-            [currX + width * prevNormal[0] * 1, currY + width * prevNormal[1] * 1],
-            [currX, currY]
-          ]]
-        }
-      }
-
-      featureCollection.features.push(feature)
-    }
   }
 })
 
 fs.writeFileSync('./strokes.json', JSON.stringify(featureCollection, null, 2))
-
-
-function isCCW (p1, p2, p3) {
-  const val = (p2[1] - p1[1]) * (p3[0] - p2[0]) - (p2[0] - p1[0]) * (p3[1] - p2[1])
-
-  return val < 0
-}
 
 
 

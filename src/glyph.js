@@ -1,5 +1,6 @@
 // @flow
 import Protobuf from 'pbf'
+import { fromLine } from './parabola'
 import { zagzig } from './zigzag'
 
 type Path = Array<number> | { vertices: Array<number>, indices: Array<number>, quads: Array<number>, strokes: Array<Array<number>> }
@@ -30,7 +31,7 @@ export default class Glyph {
     else if (tag === 3) glyph._path = pbf.pos
   }
 
-  getPath (buildPath: boolean = true): Path {
+  getPath (buildPath: boolean = true, scale?: number = 34, lineWidth?: number = 4): Path {
     // set position
     this._pbf.pos = this._path
     // find end
@@ -40,11 +41,11 @@ export default class Glyph {
     // get path code
     while (this._pbf.pos < end) path.push(zagzig(this._pbf.readVarint()))
     // if build, design a polygon, otherwise keep the commands
-    if (buildPath) return this._buildFill(path)
+    if (buildPath) return this._buildFill(path, scale, lineWidth)
     else return path
   }
 
-  _buildFill (path: Array<number>): Path {
+  _buildFill (path: Array<number>, scale: number, lineWidth: number): Path {
     const len = path.length
     const vertices = []
     const indices = []
@@ -65,7 +66,11 @@ export default class Glyph {
         x = path[i++] / 4096
         y = path[i++] / 4096
         vertices.push(x, y, 0)
-        stroke.push([x, y])
+        if (x0 && y0 && (x0 !== x || y0 !== y)) {
+          stroke.push(...fromLine([x0 * scale, y0 * scale], [x * scale, y * scale], lineWidth))
+        }
+        x0 = x
+        y0 = y
         indexPos++
       }
       // MoveTo - start a triangle with its first two points
@@ -105,15 +110,20 @@ export default class Glyph {
           const t = v / 6
           const subT = 1 - t
 
-          stroke.push([
-            subT * subT * x0 + 2 * subT * t * x1 + t * t * x,
-            subT * subT * y0 + 2 * subT * t * y1 + t * t * y
-          ])
+          x = subT * subT * x0 + 2 * subT * t * x1 + t * t * x
+          y = subT * subT * y0 + 2 * subT * t * y1 + t * t * y
+          if (x0 && y0 && (x0 !== x || y0 !== y)) {
+            stroke.push(...fromLine([x0 * scale, y0 * scale], [x * scale, y * scale], lineWidth))
+          }
+          x0 = x
+          y0 = y
         }
       } else if (command === 4) { // Close - finish the last triangle
         indices.push(anchorPos)
         strokes.push(stroke)
         stroke = []
+        x0 = null
+        y0 = null
       }
     }
 

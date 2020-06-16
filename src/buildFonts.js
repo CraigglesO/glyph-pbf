@@ -36,8 +36,6 @@ type Font = {
 type Code = { yOffset: number, maxY: number, scale: number, path: Array<number> }
 
 export default function buildFonts (fonts: Array<Font>, out: string) {
-  // prelude: build fonts
-  fonts.forEach(font => { font.data = opentype.loadSync(font.path) })
   // step 1, build a glyph set
   const [glyphMap, kernSet] = buildGlyphSet(fonts)
   // step 2, build the pbf
@@ -52,14 +50,15 @@ function buildGlyphSet (fonts: Array<Font>): Map {
   const unicodeMap = new Map()
   let fontMinY = Infinity
   for (const font of fonts) {
-    const { data, charset } = font
+    const { path, charset } = font
+    // build font data
+    const data = opentype.loadSync(path)
     const { unitsPerEm, glyphs, ascender, descender, kerningPairs } = data
     // glyph map
     for (const key in glyphs.glyphs) {
       const glyph = glyphs.glyphs[key]
-      if (glyph.index >= 50000) break
       const { unicode, index, advanceWidth } = glyph
-      if (unicode && !glyphMap.has(unicode) && (!charset || charset.includes(String.fromCharCode(unicode)))) {
+      if (glyph && unicode && index && advanceWidth && !glyphMap.has(unicode) && (!charset || charset.includes(String.fromCharCode(unicode)))) {
         let code = commandsToCode(glyph.getPath(0, 0, 1).commands)
         const { yOffset, yMax, path } = code
         fontMinY = Math.min(fontMinY, yOffset)
@@ -72,13 +71,9 @@ function buildGlyphSet (fonts: Array<Font>): Map {
       }
     }
 
-    console.log('a')
-
     // shift all glyphs by the font's minY
     const scale = 4096 / (4096 - fontMinY)
     for (const [unicode, glyph] of glyphMap) updateYOffsetAndScale(glyph, fontMinY, scale)
-
-    console.log('b')
 
     // kerning map
     for (const kernKey in kerningPairs) {
@@ -90,8 +85,6 @@ function buildGlyphSet (fonts: Array<Font>): Map {
       if (!amount) continue
       kernSet.push({ from, to, amount })
     }
-
-    console.log('c')
   }
 
   return [glyphMap, kernSet]
