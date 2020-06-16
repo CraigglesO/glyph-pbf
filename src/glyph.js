@@ -31,7 +31,8 @@ export default class Glyph {
     else if (tag === 3) glyph._path = pbf.pos
   }
 
-  getPath (buildPath: boolean = true, scale?: number = 34, lineWidth?: number = 4): Path {
+  getPath (buildPath: boolean = true, offset?: [number, number] = [0, 0],
+    scale?: number = 34, lineWidth?: number = 4): Path {
     // set position
     this._pbf.pos = this._path
     // find end
@@ -41,11 +42,12 @@ export default class Glyph {
     // get path code
     while (this._pbf.pos < end) path.push(zagzig(this._pbf.readVarint()))
     // if build, design a polygon, otherwise keep the commands
-    if (buildPath) return this._buildFill(path, scale, lineWidth)
+    if (buildPath) return this._buildFill(path, offset, scale, lineWidth)
     else return path
   }
 
-  _buildFill (path: Array<number>, scale: number, lineWidth: number): Path {
+  _buildFill (path: Array<number>, offset: [number, number], scale: number,
+    lineWidth: number): Path {
     const len = path.length
     const vertices = []
     const indices = []
@@ -67,7 +69,13 @@ export default class Glyph {
         y = path[i++] / 4096
         vertices.push(x, y, 0)
         if (x0 && y0 && (x0 !== x || y0 !== y)) {
-          stroke.push(...fromLine([x0 * scale, y0 * scale], [x * scale, y * scale], lineWidth))
+          stroke.push(
+            ...fromLine(
+              [x0 * scale + offset[0] + lineWidth, y0 * scale + offset[1] + lineWidth],
+              [x * scale + offset[0] + lineWidth, y * scale + offset[1] + lineWidth],
+              lineWidth
+            )
+          )
         }
         x0 = x
         y0 = y
@@ -106,18 +114,30 @@ export default class Glyph {
 
         // build a stroke path using a few points
         // https://stackoverflow.com/questions/5634460/quadratic-b%C3%A9zier-curve-calculate-points
-        for (let v = 0; v <= 6; v++) {
+        let xPrev = x0
+        let yPrev = y0
+        let xCurr, yCurr
+        for (let v = 1; v <= 6; v++) {
           const t = v / 6
           const subT = 1 - t
 
-          x = subT * subT * x0 + 2 * subT * t * x1 + t * t * x
-          y = subT * subT * y0 + 2 * subT * t * y1 + t * t * y
-          if (x0 && y0 && (x0 !== x || y0 !== y)) {
-            stroke.push(...fromLine([x0 * scale, y0 * scale], [x * scale, y * scale], lineWidth))
+          xCurr = subT * subT * x0 + 2 * subT * t * x1 + t * t * x
+          yCurr = subT * subT * y0 + 2 * subT * t * y1 + t * t * y
+          if (xPrev && yPrev && (xPrev !== x || yPrev !== y)) {
+            stroke.push(
+              ...fromLine(
+                [xPrev * scale + offset[0] + lineWidth, yPrev * scale + offset[1] + lineWidth],
+                [xCurr * scale + offset[0] + lineWidth, yCurr * scale + offset[1] + lineWidth],
+                lineWidth
+              )
+            )
           }
-          x0 = x
-          y0 = y
+          xPrev = xCurr
+          yPrev = yCurr
         }
+        // update new starter points
+        x0 = x
+        y0 = y
       } else if (command === 4) { // Close - finish the last triangle
         indices.push(anchorPos)
         strokes.push(stroke)
