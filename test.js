@@ -91,14 +91,15 @@ console.time('getCode')
 // const char = 469
 // const char = 9633
 // const a = 'a'
-const glyph = glyphSet.get('a')
-console.log('glyph', glyph)
+const glyph = glyphSet.get('M')
 // const glyph = glyphSet.get('ر')
 // const glyph = glyphSet.get('ൽ')
 console.timeEnd('getCode')
 
+console.log('glyph', glyph)
+
 console.time('buildPath')
-const { indices, vertices, quads, strokes } = glyph.getPath(true, [0, 0], 34, 1)
+const { indices, vertices, quads, strokes } = glyph.getPath(true, [5, 3], 34, 1)
 console.timeEnd('buildPath')
 
 // console.log('strokes', strokes)

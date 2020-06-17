@@ -69,8 +69,8 @@ function setParVertex (par: Parabola, pos: [number, number]): SdfVertex {
 function worldToPar (par: Parabola, pos: [number, number]): [number, number] {
   const is = 1 / par.scale
   const dpos = [pos[0] - par.mat[2][0], pos[1] - par.mat[2][1]]
-  const r0 = [dpos[0] - par.mat[0][0], dpos[1] - par.mat[0][1]]
-  const r1 = [dpos[0] - par.mat[1][0], dpos[1] - par.mat[1][1]]
+  const r0 = [dpos[0] * par.mat[0][0], dpos[1] * par.mat[0][1]]
+  const r1 = [dpos[0] * par.mat[1][0], dpos[1] * par.mat[1][1]]
 
   return [
     is * (r0[0] + r0[1]),
