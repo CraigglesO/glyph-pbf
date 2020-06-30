@@ -4,30 +4,30 @@ const fs = require('fs')
 //
 // const fonts = [
 //   './testFonts/NotoSans-Regular.ttf',
-//   './testFonts/NotoSansTifinagh-Regular.ttf',
-//   './testFonts/NotoSansEthiopic-Regular.ttf',
-//   './testFonts/NotoSansMyanmar-Regular.ttf',
+//   // './testFonts/NotoSansTifinagh-Regular.ttf',
+//   // './testFonts/NotoSansEthiopic-Regular.ttf',
+//   // './testFonts/NotoSansMyanmar-Regular.ttf',
 //   './testFonts/NotoSansKhmer-Regular.ttf',
 //   './testFonts/NotoSansMongolian-Regular.ttf',
-//   './testFonts/NotoSansCanadianAboriginal-Regular.ttf',
-//   './testFonts/NotoSansNKo-Regular.ttf',
-//   './testFonts/NotoSansArmenian-Regular.ttf',
-//   './testFonts/NotoSansHebrew-Regular.ttf',
-//   './testFonts/NotoSansKannada-Regular.ttf',
-//   './testFonts/NotoSansThai-Regular.ttf',
+//   // './testFonts/NotoSansCanadianAboriginal-Regular.ttf',
+//   // './testFonts/NotoSansNKo-Regular.ttf',
+//   // './testFonts/NotoSansArmenian-Regular.ttf',
+//   // './testFonts/NotoSansHebrew-Regular.ttf',
+//   // './testFonts/NotoSansKannada-Regular.ttf',
+//   // './testFonts/NotoSansThai-Regular.ttf',
 //   // './testFonts/NotoSansArabicUI-Regular.ttf',
-//   './testFonts/NotoSansLao-Regular.ttf',
-//   './testFonts/NotoSansGeorgian-Regular.ttf',
-//   './testFonts/NotoSansTibetan-Regular.ttf',
-//   './testFonts/NotoSansTamil-Regular.ttf',
-//   './testFonts/NotoSansTelugu-Regular.ttf',
-//   './testFonts/NotoSansBengali-Regular.ttf',
-//   './testFonts/NotoSansDevanagari-Regular.ttf',
-//   './testFonts/NotoSansMalayalam-Regular.ttf',
+//   // './testFonts/NotoSansLao-Regular.ttf',
+//   // './testFonts/NotoSansGeorgian-Regular.ttf',
+//   // './testFonts/NotoSansTibetan-Regular.ttf',
+//   // './testFonts/NotoSansTamil-Regular.ttf',
+//   // './testFonts/NotoSansTelugu-Regular.ttf',
+//   // './testFonts/NotoSansBengali-Regular.ttf',
+//   // './testFonts/NotoSansDevanagari-Regular.ttf',
+//   // './testFonts/NotoSansMalayalam-Regular.ttf',
 //   // './testFonts/NotoSansCJKtc-Regular.ttf',
 //   './testFonts/arial-unicode-ms.ttf'
 // ]
-//
+
 // buildFonts(fonts.map(font => { return { path: font, charset } }), './default.pbf')
 
 // buildFonts(['./testFonts/NotoSans-Regular.ttf'], './default.pbf')
@@ -66,7 +66,6 @@ const fs = require('fs')
 
 // const fs = require('fs')
 const zlib = require('zlib')
-const drawLine = require('line-gl').default
 
 const GlyphSet = require('./lib/glyphSet').default
 
@@ -91,7 +90,8 @@ console.time('getCode')
 // const char = 469
 // const char = 9633
 // const a = 'a'
-const glyph = glyphSet.get('M')
+const glyph = glyphSet.get('F')
+const glyph2 = glyphSet.get('a')
 // const glyph = glyphSet.get('ر')
 // const glyph = glyphSet.get('ൽ')
 console.timeEnd('getCode')
@@ -99,7 +99,8 @@ console.timeEnd('getCode')
 console.log('glyph', glyph)
 
 console.time('buildPath')
-const { indices, vertices, quads, strokes } = glyph.getPath(true, [5, 3], 34, 1)
+// const { indices, vertices, quads, strokes } = glyph.getPath(true, [0, 0], 34, 1)
+const { indices, vertices, quads, strokes } = glyph2.getPath(true, [glyph.advanceWidth, 0], 34, 1)
 console.timeEnd('buildPath')
 
 // console.log('strokes', strokes)
@@ -125,10 +126,10 @@ for (let i = 0, il = indices.length; i < il; i += 3) {
     geometry: {
       type: 'Polygon',
       coordinates: [[
-        [vertices[indices[i] * 3], vertices[indices[i] * 3 + 1]],
-        [vertices[indices[i + 1] * 3], vertices[indices[i + 1] * 3 + 1]],
-        [vertices[indices[i + 2] * 3], vertices[indices[i + 2] * 3 + 1]],
-        [vertices[indices[i] * 3], vertices[indices[i] * 3 + 1]]
+        [vertices[indices[i] * 3] + (glyph.advanceWidth * 1.0), vertices[indices[i] * 3 + 1]],
+        [vertices[indices[i + 1] * 3] + (glyph.advanceWidth * 1.0), vertices[indices[i + 1] * 3 + 1]],
+        [vertices[indices[i + 2] * 3] + (glyph.advanceWidth * 1.0), vertices[indices[i + 2] * 3 + 1]],
+        [vertices[indices[i] * 3] + (glyph.advanceWidth * 1.0), vertices[indices[i] * 3 + 1]]
       ]]
     }
   }
