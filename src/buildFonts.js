@@ -60,20 +60,20 @@ function buildGlyphSet (fonts: Array<Font>): Map {
       const { unicode, index, advanceWidth } = glyph
       if (glyph && unicode && index && advanceWidth && !glyphMap.has(unicode) && (!charset || charset.includes(String.fromCharCode(unicode)))) {
         let code = commandsToCode(glyph.getPath(0, 0, 1).commands)
-        const { yOffset, yMax, path } = code
-        fontMinY = Math.min(fontMinY, yOffset)
-        glyphMap.set(unicode, {
+        const { yOffset, path } = code
+        const bbox = glyph.getBoundingBox()
+        const builtGlyph = {
+          unitsPerEm,
           advanceWidth: Math.round(advanceWidth / unitsPerEm * 4096),
-          yMax,
-          path
-        })
+          path,
+          yOffset: (yOffset < 0) ? -yOffset : 0,
+          yRange: [bbox.y1 > 0 ? 0 : bbox.y1, bbox.y2]
+        }
+        // TODO: scale if bbox y total is greater than 1
+        glyphMap.set(unicode, builtGlyph)
         unicodeMap.set(index, unicode)
       }
     }
-
-    // shift all glyphs by the font's minY
-    const scale = 4096 / (4096 - fontMinY)
-    for (const [unicode, glyph] of glyphMap) updateYOffsetAndScale(glyph, fontMinY, scale)
 
     // kerning map
     for (const kernKey in kerningPairs) {
@@ -97,7 +97,6 @@ function getUnicode (unicodeMap: Set, index: number) {
 function commandsToCode (commands: Array<Command>): Code {
   let prevX: number, prevY: number, add: number, yVal: number
   let yOffset: number = Infinity
-  let yMax: number = -Infinity
   const path = []
   commands.forEach(command => {
     const { type, x, y, x1, y1, x2, y2 } = command
@@ -107,7 +106,6 @@ function commandsToCode (commands: Array<Command>): Code {
     if (type !== 'Z') {
       yVal = Math.round(-y * 4096)
       yOffset = Math.min(yOffset, yVal)
-      yMax = Math.max(yMax, yVal)
     }
     if (type === 'M') { // Move to
       path.push(0, Math.round(x * 4096), Math.round(-y * 4096))
@@ -122,11 +120,11 @@ function commandsToCode (commands: Array<Command>): Code {
     }
   })
 
-  return { yOffset, yMax, path }
+  return { yOffset, path }
 }
 
 // If yOffset is below 0, we move the path data up by yOffset
-function updateYOffsetAndScale (glyph, fontOffset: number, scale: number) {
+function updateYOffset (glyph, yOffset: number) {
   const { path } = glyph
   const newPath = []
   let i = 0
@@ -134,16 +132,16 @@ function updateYOffsetAndScale (glyph, fontOffset: number, scale: number) {
 
   while (i < len) {
     if (path[i] === 0) {
-      newPath.push(0, Math.round((path[i + 1]) * scale), Math.round((-fontOffset + path[i + 2]) * scale))
+      newPath.push(0, Math.round(path[i + 1]), Math.round(-yOffset + path[i + 2]))
       i += 3
     } else if (path[i] === 1) {
-      newPath.push(1, Math.round((path[i + 1]) * scale), Math.round((-fontOffset + path[i + 2]) * scale))
+      newPath.push(1, Math.round(path[i + 1]), Math.round(-yOffset + path[i + 2]))
       i += 3
     } else if (path[i] === 2) {
-      newPath.push(2, Math.round((path[i + 1]) * scale), Math.round((-fontOffset + path[i + 2]) * scale), Math.round((path[i + 3]) * scale), Math.round((-fontOffset + path[i + 4]) * scale), Math.round((path[i + 5]) * scale), Math.round((-fontOffset + path[i + 6]) * scale))
+      newPath.push(2, Math.round(path[i + 1]), Math.round(-yOffset + path[i + 2]), Math.round(path[i + 3]), Math.round(-yOffset + path[i + 4]), Math.round(path[i + 5]), Math.round(-yOffset + path[i + 6]))
       i += 7
     } else if (path[i] === 3) {
-      newPath.push(3, Math.round((path[i + 1]) * scale), Math.round((-fontOffset + path[i + 2]) * scale), Math.round((path[i + 3]) * scale), Math.round((-fontOffset + path[i + 4]) * scale))
+      newPath.push(3, Math.round(path[i + 1]), Math.round(-yOffset + path[i + 2]), Math.round(path[i + 3]), Math.round(-yOffset + path[i + 4]))
       i += 5
     } else if (path[i] === 4) {
       newPath.push(4)
@@ -152,8 +150,6 @@ function updateYOffsetAndScale (glyph, fontOffset: number, scale: number) {
   }
 
   glyph.path = newPath
-  glyph.advanceWidth = Math.round(glyph.advanceWidth * scale)
-  glyph.yMax = Math.round(glyph.yMax * scale)
 }
 
 // If the maxY is greater than 1, we update.

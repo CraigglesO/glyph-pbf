@@ -18,6 +18,7 @@ the end of a quad is defined by type 3: [1, 1]
 export default class Glyph {
   char: string
   advanceWidth: number
+  yOffset: number = 0
   path: Path
   _path: number
   constructor (pbf: Protobuf, end: number) {
@@ -28,7 +29,8 @@ export default class Glyph {
   readGlyph (tag: number, glyph: Glyph, pbf: Protobuf) {
     if (tag === 1) glyph.char = String.fromCharCode(pbf.readVarint())
     else if (tag === 2) glyph.advanceWidth = pbf.readVarint() / 4096
-    else if (tag === 3) glyph._path = pbf.pos
+    else if (tag === 3) glyph.yOffset = pbf.readVarint() / 4096
+    else if (tag === 4) glyph._path = pbf.pos
   }
 
   getPath (buildPath: boolean = true, offset?: [number, number] = [0, 0],

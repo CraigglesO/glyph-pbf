@@ -7,7 +7,7 @@ const unicodes = new Set()
 
 const fonts = [
   opentype.loadSync('./testFonts/NotoSans-Regular.ttf'),
-  // opentype.loadSync('./testFonts/NotoSansCJKtc-Regular.ttf'),
+  opentype.loadSync('./testFonts/NotoSansCJKtc-Regular.ttf'),
   opentype.loadSync('./testFonts/NotoSansTifinagh-Regular.ttf'),
   opentype.loadSync('./testFonts/NotoSansEthiopic-Regular.ttf'),
   opentype.loadSync('./testFonts/NotoSansMyanmar-Regular.ttf'),
@@ -19,7 +19,7 @@ const fonts = [
   opentype.loadSync('./testFonts/NotoSansHebrew-Regular.ttf'),
   opentype.loadSync('./testFonts/NotoSansKannada-Regular.ttf'),
   opentype.loadSync('./testFonts/NotoSansThai-Regular.ttf'),
-  opentype.loadSync('./testFonts/NotoSansArabicUI-Regular.ttf'),
+  opentype.loadSync('./testFonts/NotoSansArabic-Medium.ttf'),
   opentype.loadSync('./testFonts/NotoSansLao-Regular.ttf'),
   opentype.loadSync('./testFonts/NotoSansGeorgian-Regular.ttf'),
   opentype.loadSync('./testFonts/NotoSansTibetan-Regular.ttf'),
@@ -28,7 +28,7 @@ const fonts = [
   opentype.loadSync('./testFonts/NotoSansBengali-Regular.ttf'),
   opentype.loadSync('./testFonts/NotoSansDevanagari-Regular.ttf'),
   opentype.loadSync('./testFonts/NotoSansMalayalam-Regular.ttf'),
-  opentype.loadSync('./testFonts/arial-unicode-ms.ttf')
+  // opentype.loadSync('./testFonts/arial-unicode-ms.ttf')
 ]
 
 for (const font of fonts) {
