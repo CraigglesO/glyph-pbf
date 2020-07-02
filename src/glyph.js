@@ -44,11 +44,11 @@ export default class Glyph {
     // get path code
     while (this._pbf.pos < end) path.push(zagzig(this._pbf.readVarint()))
     // if build, design a polygon, otherwise keep the commands
-    if (buildPath) return this._buildFill(path, offset, scale, lineWidth)
+    if (buildPath) return this._buildSDF(path, offset, scale, lineWidth)
     else return path
   }
 
-  _buildFill (path: Array<number>, offset: [number, number], scale: number,
+  _buildSDF (path: Array<number>, offset: [number, number], scale: number,
     lineWidth: number): Path {
     const len = path.length
     const vertices = []
@@ -70,7 +70,7 @@ export default class Glyph {
         x = path[i++] / 4096
         y = path[i++] / 4096
         vertices.push(x, y, 0)
-        if (x0 && y0 && (x0 !== x || y0 !== y)) {
+        if (x0 !== undefined && y0 !== undefined && (x0 !== x || y0 !== y)) {
           stroke.push(
             ...fromLine(
               [x0 * scale + offset[0] + lineWidth, y0 * scale + offset[1] + lineWidth],

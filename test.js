@@ -2,33 +2,33 @@ const fs = require('fs')
 const buildFonts = require('./lib/buildFonts').default
 const charset = fs.readFileSync('./charset2.txt', 'utf8')
 
-const fonts = [
-  './testFonts/NotoSans-Regular.ttf',
-  './testFonts/NotoSansTifinagh-Regular.ttf',
-  './testFonts/NotoSansEthiopic-Regular.ttf',
-  './testFonts/NotoSansMyanmar-Regular.ttf',
-  './testFonts/NotoSansKhmer-Regular.ttf',
-  './testFonts/NotoSansMongolian-Regular.ttf',
-  './testFonts/NotoSansCanadianAboriginal-Regular.ttf',
-  './testFonts/NotoSansNKo-Regular.ttf',
-  './testFonts/NotoSansArmenian-Regular.ttf',
-  './testFonts/NotoSansHebrew-Regular.ttf',
-  './testFonts/NotoSansKannada-Regular.ttf',
-  './testFonts/NotoSansThai-Regular.ttf',
-  './testFonts/NotoSansArabic-Medium.ttf',
-  './testFonts/NotoSansLao-Regular.ttf',
-  './testFonts/NotoSansGeorgian-Regular.ttf',
-  './testFonts/NotoSansTibetan-Regular.ttf',
-  './testFonts/NotoSansTamil-Regular.ttf',
-  './testFonts/NotoSansTelugu-Regular.ttf',
-  './testFonts/NotoSansBengali-Regular.ttf',
-  './testFonts/NotoSansDevanagari-Regular.ttf',
-  './testFonts/NotoSansMalayalam-Regular.ttf',
-  './testFonts/NotoSansCJKtc-Regular.ttf',
-  './testFonts/arial-unicode-ms.ttf'
-]
-
-buildFonts(fonts.map(font => { return { path: font, charset } }), './default.pbf')
+// const fonts = [
+//   './testFonts/NotoSans-Regular.ttf',
+//   './testFonts/NotoSansTifinagh-Regular.ttf',
+//   './testFonts/NotoSansEthiopic-Regular.ttf',
+//   './testFonts/NotoSansMyanmar-Regular.ttf',
+//   './testFonts/NotoSansKhmer-Regular.ttf',
+//   './testFonts/NotoSansMongolian-Regular.ttf',
+//   './testFonts/NotoSansCanadianAboriginal-Regular.ttf',
+//   './testFonts/NotoSansNKo-Regular.ttf',
+//   './testFonts/NotoSansArmenian-Regular.ttf',
+//   './testFonts/NotoSansHebrew-Regular.ttf',
+//   './testFonts/NotoSansKannada-Regular.ttf',
+//   './testFonts/NotoSansThai-Regular.ttf',
+//   './testFonts/NotoSansArabic-Medium.ttf',
+//   './testFonts/NotoSansLao-Regular.ttf',
+//   './testFonts/NotoSansGeorgian-Regular.ttf',
+//   './testFonts/NotoSansTibetan-Regular.ttf',
+//   './testFonts/NotoSansTamil-Regular.ttf',
+//   './testFonts/NotoSansTelugu-Regular.ttf',
+//   './testFonts/NotoSansBengali-Regular.ttf',
+//   './testFonts/NotoSansDevanagari-Regular.ttf',
+//   './testFonts/NotoSansMalayalam-Regular.ttf',
+//   './testFonts/NotoSansCJKtc-Regular.ttf',
+//   './testFonts/arial-unicode-ms.ttf'
+// ]
+//
+// buildFonts(fonts.map(font => { return { path: font, charset } }), './default.pbf')
 
 // buildFonts(['./testFonts/NotoSans-Regular.ttf'], './default.pbf')
 
@@ -39,7 +39,7 @@ buildFonts(fonts.map(font => { return { path: font, charset } }), './default.pbf
 // buildFonts([{ path: './testFonts/Roboto-Regular.ttf', charset: ' !"#$%&\'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~' }], './RobotoRegular.pbf')
 // buildFonts([{ path: './testFonts/Roboto-Medium.ttf', charset: ' !"#$%&\'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~' }], './RobotoMedium.pbf')
 // buildFonts([{ path: './testFonts/Roboto-Regular.ttf', charset }], './RobotoRegular.pbf')
-// buildFonts([{ path: './testFonts/Roboto-Medium.ttf', charset }], './RobotoMedium.pbf')
+buildFonts([{ path: './testFonts/Roboto-Medium.ttf', charset: 'A' }], './RobotoMedium.pbf')
 // buildFonts([{ path: './testFonts/Lato-Bold.ttf', charset: ' !"#$%&\'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~' }], './LatoBold.pbf')
 // buildFonts([{ path: './testFonts/Lato-Bold.ttf', charset }], './LatoBold.pbf')
 
@@ -69,9 +69,9 @@ const zlib = require('zlib')
 
 const GlyphSet = require('./lib/glyphSet').default
 
-const pbf = zlib.gunzipSync(fs.readFileSync('./default.pbf'))
+// const pbf = zlib.gunzipSync(fs.readFileSync('./default.pbf'))
 // const pbf = zlib.gunzipSync(fs.readFileSync('./LatoBold.pbf'))
-// const pbf = zlib.gunzipSync(fs.readFileSync('./RobotoMedium.pbf'))
+const pbf = zlib.gunzipSync(fs.readFileSync('./RobotoMedium.pbf'))
 
 console.time('build')
 const glyphSet = new GlyphSet(pbf)
@@ -91,8 +91,8 @@ console.time('getCode')
 // const char = 9633
 // const a = 'a'
 // const glyph = glyphSet.get('f')
-// const glyph2 = glyphSet.get('a')
-const glyph = glyphSet.get('ر')
+const glyph = glyphSet.get('A')
+// const glyph = glyphSet.get('ر')
 // const glyph = glyphSet.get('ൽ')
 // const glyph = glyphSet.get('死')
 // const glyph = glyphSet.get('ស')
