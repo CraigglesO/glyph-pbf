@@ -70,7 +70,7 @@ export default class Glyph {
         x = path[i++] / 4096
         y = path[i++] / 4096
         vertices.push(x, y, 0)
-        if (x0 !== undefined && y0 !== undefined && (x0 !== x || y0 !== y)) {
+        if (x0 !== undefined && (x0 !== x || y0 !== y)) {
           stroke.push(
             ...fromLine(
               [x0 * scale + offset[0] + lineWidth, y0 * scale + offset[1] + lineWidth],
@@ -144,8 +144,8 @@ export default class Glyph {
         indices.push(anchorPos)
         strokes.push(stroke)
         stroke = []
-        x0 = null
-        y0 = null
+        x0 = undefined
+        y0 = undefined
       }
     }
 

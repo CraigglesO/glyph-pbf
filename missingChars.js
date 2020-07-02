@@ -28,7 +28,7 @@ const fonts = [
   opentype.loadSync('./testFonts/NotoSansBengali-Regular.ttf'),
   opentype.loadSync('./testFonts/NotoSansDevanagari-Regular.ttf'),
   opentype.loadSync('./testFonts/NotoSansMalayalam-Regular.ttf'),
-  // opentype.loadSync('./testFonts/arial-unicode-ms.ttf')
+  opentype.loadSync('./testFonts/arial-unicode-ms.ttf')
 ]
 
 for (const font of fonts) {
@@ -48,3 +48,6 @@ for (const char of charset) {
 }
 
 fs.writeFileSync('./missingChars.txt', missingChars)
+
+missingChars = missingChars.split('').map(s => s.charCodeAt(0))
+console.log('missingChars', missingChars)

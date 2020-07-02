@@ -1,33 +1,33 @@
 const fs = require('fs')
-const buildFonts = require('./lib/buildFonts').default
-const charset = fs.readFileSync('./charset2.txt', 'utf8')
-
-const fonts = [
-  './testFonts/NotoSans-Regular.ttf',
-  './testFonts/NotoSansTifinagh-Regular.ttf',
-  './testFonts/NotoSansEthiopic-Regular.ttf',
-  './testFonts/NotoSansMyanmar-Regular.ttf',
-  './testFonts/NotoSansKhmer-Regular.ttf',
-  './testFonts/NotoSansMongolian-Regular.ttf',
-  './testFonts/NotoSansCanadianAboriginal-Regular.ttf',
-  './testFonts/NotoSansNKo-Regular.ttf',
-  './testFonts/NotoSansArmenian-Regular.ttf',
-  './testFonts/NotoSansHebrew-Regular.ttf',
-  './testFonts/NotoSansKannada-Regular.ttf',
-  './testFonts/NotoSansThai-Regular.ttf',
-  './testFonts/NotoSansArabic-Medium.ttf',
-  './testFonts/NotoSansLao-Regular.ttf',
-  './testFonts/NotoSansGeorgian-Regular.ttf',
-  './testFonts/NotoSansTibetan-Regular.ttf',
-  './testFonts/NotoSansTamil-Regular.ttf',
-  './testFonts/NotoSansTelugu-Regular.ttf',
-  './testFonts/NotoSansBengali-Regular.ttf',
-  './testFonts/NotoSansDevanagari-Regular.ttf',
-  './testFonts/NotoSansMalayalam-Regular.ttf',
-  './testFonts/NotoSansCJKtc-Regular.ttf',
-  './testFonts/arial-unicode-ms.ttf'
-]
-
+// const buildFonts = require('./lib/buildFonts').default
+// const charset = fs.readFileSync('./charset3.txt', 'utf8')
+//
+// const fonts = [
+//   './testFonts/NotoSans-Regular.ttf',
+//   './testFonts/NotoSansTifinagh-Regular.ttf',
+//   './testFonts/NotoSansEthiopic-Regular.ttf',
+//   './testFonts/NotoSansMyanmar-Regular.ttf',
+//   './testFonts/NotoSansKhmer-Regular.ttf',
+//   './testFonts/NotoSansMongolian-Regular.ttf',
+//   './testFonts/NotoSansCanadianAboriginal-Regular.ttf',
+//   './testFonts/NotoSansNKo-Regular.ttf',
+//   './testFonts/NotoSansArmenian-Regular.ttf',
+//   './testFonts/NotoSansHebrew-Regular.ttf',
+//   './testFonts/NotoSansKannada-Regular.ttf',
+//   './testFonts/NotoSansThai-Regular.ttf',
+//   './testFonts/NotoSansArabic-Medium.ttf',
+//   './testFonts/NotoSansLao-Regular.ttf',
+//   './testFonts/NotoSansGeorgian-Regular.ttf',
+//   './testFonts/NotoSansTibetan-Regular.ttf',
+//   './testFonts/NotoSansTamil-Regular.ttf',
+//   './testFonts/NotoSansTelugu-Regular.ttf',
+//   './testFonts/NotoSansBengali-Regular.ttf',
+//   './testFonts/NotoSansDevanagari-Regular.ttf',
+//   './testFonts/NotoSansMalayalam-Regular.ttf',
+//   './testFonts/NotoSansCJKtc-Regular.ttf',
+//   './testFonts/arial-unicode-ms.ttf'
+// ]
+//
 // buildFonts(fonts.map(font => { return { path: font, charset } }), './default.pbf')
 
 // buildFonts(['./testFonts/NotoSans-Regular.ttf'], './default.pbf')
@@ -39,7 +39,7 @@ const fonts = [
 // buildFonts([{ path: './testFonts/Roboto-Regular.ttf', charset: ' !"#$%&\'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~' }], './RobotoRegular.pbf')
 // buildFonts([{ path: './testFonts/Roboto-Medium.ttf', charset: ' !"#$%&\'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~' }], './RobotoMedium.pbf')
 // buildFonts([{ path: './testFonts/Roboto-Regular.ttf', charset }], './RobotoRegular.pbf')
-buildFonts([{ path: './testFonts/Roboto-Medium.ttf', charset }], './RobotoMedium.pbf')
+// buildFonts([{ path: './testFonts/Roboto-Medium.ttf', charset }], './RobotoMedium.pbf')
 // buildFonts([{ path: './testFonts/Lato-Bold.ttf', charset: ' !"#$%&\'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~' }], './LatoBold.pbf')
 // buildFonts([{ path: './testFonts/Lato-Bold.ttf', charset }], './LatoBold.pbf')
 
@@ -69,9 +69,9 @@ const zlib = require('zlib')
 
 const GlyphSet = require('./lib/glyphSet').default
 
-// const pbf = zlib.gunzipSync(fs.readFileSync('./default.pbf'))
+const pbf = zlib.gunzipSync(fs.readFileSync('./default.pbf'))
 // const pbf = zlib.gunzipSync(fs.readFileSync('./LatoBold.pbf'))
-const pbf = zlib.gunzipSync(fs.readFileSync('./RobotoMedium.pbf'))
+// const pbf = zlib.gunzipSync(fs.readFileSync('./RobotoMedium.pbf'))
 
 console.time('build')
 const glyphSet = new GlyphSet(pbf)
@@ -90,8 +90,8 @@ console.time('getCode')
 // const char = 469
 // const char = 9633
 // const a = 'a'
-// const glyph = glyphSet.get('f')
 const glyph = glyphSet.get('A')
+// const glyph = glyphSet.get(String.fromCharCode(3640))
 // const glyph = glyphSet.get('ر')
 // const glyph = glyphSet.get('ൽ')
 // const glyph = glyphSet.get('死')
@@ -254,35 +254,13 @@ fs.writeFileSync('./strokes.json', JSON.stringify(featureCollection, null, 2))
 
 
 
-// code {
-//   yOffset: -942,
-//   yMax: 1389,
-//   path: [
-//        0,   16, -942,    1, -102, -631,    3,  311, -500, 535,
-//     -319,    3,  758, -139,  842,   59,    3,  926,  258, 926,
-//      438,    3,  926,  553,  901,  659,    3,  877,  766, 815,
-//      901,    3,  754, 1036,  643, 1237,    1,  942, 1389,   3,
-//     1098, 1122, 1165,  885,    3, 1233,  647, 1233,  467,   3,
-//     1233,  209, 1149,   -0,    3, 1065, -209,  928, -371,   3,
-//      791, -532,  629, -647,    3,  467, -762,  305, -836,   3,
-//      143, -909,   16, -942,    4
-//   ]
-// }
-// bbox BoundingBox { x1: -25, y1: -230, x2: 301, y2: 339 }
-// advanceWidth: 0.29833984375,
-//
-//
-// code {
-//   yOffset: -860,
-//   yMax: 1188,
-//   path: [
-//        0,  910, 1188,    1, 1332, 1188,    3, 1462,
-//      834, 1462,  438,    3, 1462, -182, 1093, -521,
-//        3,  724, -860,   90, -860,    3,  -52, -860,
-//     -304, -832,    1, -230, -480,    3,  -50, -512,
-//       94, -512,    3, 1114, -512, 1114,  438,    3,
-//     1114,  774,  910, 1188,    4
-//   ]
-// }
-// bbox BoundingBox { x1: -152, y1: -430, x2: 731, y2: 594 }
-// advanceWidth: 0.347900390625,
+// char 3640 1.cca3eb7d.chunk.worker.js:24436:19
+// char 258 1.cca3eb7d.chunk.worker.js:24436:19
+// char 3633 3 1.cca3eb7d.chunk.worker.js:24436:19
+// char 2509 2 1.cca3eb7d.chunk.worker.js:24436:19
+// char 2492 2 1.cca3eb7d.chunk.worker.js:24436:19
+// char 2497 1.cca3eb7d.chunk.worker.js:24436:19ุ
+
+// LATIN
+// THAI
+// BENGALI
