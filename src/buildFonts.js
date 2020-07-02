@@ -5,9 +5,11 @@ import * as opentype from 'opentype.js'
 import serialize from './serialize'
 
 export type Glyph = {
+  unitsPerEm: number,
   advanceWidth: number,
   yOffset: numnber,
-  path: Array<number>
+  path: Array<number>,
+  yRange: number
 }
 
 export type KernSet = Array<Kern>
@@ -62,13 +64,13 @@ function buildGlyphSet (fonts: Array<Font>): Map {
         let code = commandsToCode(glyph.getPath(0, 0, 1).commands)
         const { yOffset, path } = code
         const bbox = glyph.getBoundingBox()
-        const builtGlyph = {
-          unitsPerEm,
+        let builtGlyph = {
           advanceWidth: Math.round(advanceWidth / unitsPerEm * 4096),
           path,
           yOffset: (yOffset < 0) ? -yOffset : 0,
-          yRange: [bbox.y1 > 0 ? 0 : bbox.y1, bbox.y2]
+          yRange: [bbox.y1 > 0 ? 0 : bbox.y1 / unitsPerEm, bbox.y2 / unitsPerEm]
         }
+        if (builtGlyph.yRange[1] - builtGlyph.yRange[0] > 1) builtGlyph = rescaleGlyph(builtGlyph)
         // TODO: scale if bbox y total is greater than 1
         glyphMap.set(unicode, builtGlyph)
         unicodeMap.set(index, unicode)
@@ -123,25 +125,27 @@ function commandsToCode (commands: Array<Command>): Code {
   return { yOffset, path }
 }
 
-// If yOffset is below 0, we move the path data up by yOffset
-function updateYOffset (glyph, yOffset: number) {
-  const { path } = glyph
+// If the total size of the glyph exceeds 1, than it is too large.
+function rescaleGlyph (glyph: Glyph): Glyph {
+  const { path, yRange } = glyph
   const newPath = []
   let i = 0
   let len = path.length
 
+  const scale = 1 / yRange[2] - yRange[1]
+
   while (i < len) {
     if (path[i] === 0) {
-      newPath.push(0, Math.round(path[i + 1]), Math.round(-yOffset + path[i + 2]))
+      newPath.push(0, Math.round(path[i + 1] * scale), Math.round(path[i + 2] * scale))
       i += 3
     } else if (path[i] === 1) {
-      newPath.push(1, Math.round(path[i + 1]), Math.round(-yOffset + path[i + 2]))
+      newPath.push(1, Math.round(path[i + 1] * scale), Math.round(path[i + 2] * scale))
       i += 3
     } else if (path[i] === 2) {
-      newPath.push(2, Math.round(path[i + 1]), Math.round(-yOffset + path[i + 2]), Math.round(path[i + 3]), Math.round(-yOffset + path[i + 4]), Math.round(path[i + 5]), Math.round(-yOffset + path[i + 6]))
+      newPath.push(2, Math.round(path[i + 1] * scale), Math.round(path[i + 2] * scale), Math.round(path[i + 3] * scale), Math.round(path[i + 4] * scale), Math.round(path[i + 5] * scale), Math.round(path[i + 6] * scale))
       i += 7
     } else if (path[i] === 3) {
-      newPath.push(3, Math.round(path[i + 1]), Math.round(-yOffset + path[i + 2]), Math.round(path[i + 3]), Math.round(-yOffset + path[i + 4]))
+      newPath.push(3, Math.round(path[i + 1] * scale), Math.round(path[i + 2] * scale), Math.round(path[i + 3] * scale), Math.round(path[i + 4] * scale))
       i += 5
     } else if (path[i] === 4) {
       newPath.push(4)
@@ -150,39 +154,6 @@ function updateYOffset (glyph, yOffset: number) {
   }
 
   glyph.path = newPath
-}
 
-// If the maxY is greater than 1, we update.
-function rescaleCode (code: Code): Code {
-  const { maxY, path } = code
-  // set the scale
-  const scale = code.scale = 4096 / maxY
-
-  // run through path and multiply all x and y by scale
-  const newPath = []
-  let i = 0
-  let len = path.length
-
-  while (i < len) {
-    if (path[i] === 0) {
-      newPath.push(0, Math.round(scale * path[i + 1]), Math.round(scale * path[i + 2]))
-      i += 3
-    } else if (path[i] === 1) {
-      newPath.push(1, Math.round(scale * path[i + 1]), Math.round(scale * path[i + 2]))
-      i += 3
-    } else if (path[i] === 2) {
-      newPath.push(2, Math.round(scale * path[i + 1]), Math.round(scale * path[i + 2]), Math.round(scale * path[i + 3]), Math.round(scale * path[i + 4]), Math.round(scale * path[i + 5]), Math.round(scale * path[i + 6]))
-      i += 7
-    } else if (path[i] === 3) {
-      newPath.push(3, Math.round(scale * path[i + 1]), Math.round(scale * path[i + 2]), Math.round(scale * path[i + 3]), Math.round(scale * path[i + 4]))
-      i += 5
-    } else if (path[i] === 4) {
-      newPath.push(4)
-      i++
-    }
-  }
-
-  code.path = newPath
-
-  return code
+  return glyph
 }

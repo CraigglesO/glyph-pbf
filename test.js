@@ -2,33 +2,33 @@ const fs = require('fs')
 const buildFonts = require('./lib/buildFonts').default
 const charset = fs.readFileSync('./charset2.txt', 'utf8')
 
-// const fonts = [
-//   './testFonts/NotoSans-Regular.ttf',
-//   './testFonts/NotoSansTifinagh-Regular.ttf',
-//   './testFonts/NotoSansEthiopic-Regular.ttf',
-//   './testFonts/NotoSansMyanmar-Regular.ttf',
-//   './testFonts/NotoSansKhmer-Regular.ttf',
-//   './testFonts/NotoSansMongolian-Regular.ttf',
-//   './testFonts/NotoSansCanadianAboriginal-Regular.ttf',
-//   './testFonts/NotoSansNKo-Regular.ttf',
-//   './testFonts/NotoSansArmenian-Regular.ttf',
-//   './testFonts/NotoSansHebrew-Regular.ttf',
-//   './testFonts/NotoSansKannada-Regular.ttf',
-//   './testFonts/NotoSansThai-Regular.ttf',
-//   './testFonts/NotoSansArabic-Medium.ttf',
-//   './testFonts/NotoSansLao-Regular.ttf',
-//   './testFonts/NotoSansGeorgian-Regular.ttf',
-//   './testFonts/NotoSansTibetan-Regular.ttf',
-//   './testFonts/NotoSansTamil-Regular.ttf',
-//   './testFonts/NotoSansTelugu-Regular.ttf',
-//   './testFonts/NotoSansBengali-Regular.ttf',
-//   './testFonts/NotoSansDevanagari-Regular.ttf',
-//   './testFonts/NotoSansMalayalam-Regular.ttf',
-//   './testFonts/NotoSansCJKtc-Regular.ttf',
-//   // './testFonts/arial-unicode-ms.ttf'
-// ]
+const fonts = [
+  './testFonts/NotoSans-Regular.ttf',
+  './testFonts/NotoSansTifinagh-Regular.ttf',
+  './testFonts/NotoSansEthiopic-Regular.ttf',
+  './testFonts/NotoSansMyanmar-Regular.ttf',
+  './testFonts/NotoSansKhmer-Regular.ttf',
+  './testFonts/NotoSansMongolian-Regular.ttf',
+  './testFonts/NotoSansCanadianAboriginal-Regular.ttf',
+  './testFonts/NotoSansNKo-Regular.ttf',
+  './testFonts/NotoSansArmenian-Regular.ttf',
+  './testFonts/NotoSansHebrew-Regular.ttf',
+  './testFonts/NotoSansKannada-Regular.ttf',
+  './testFonts/NotoSansThai-Regular.ttf',
+  './testFonts/NotoSansArabic-Medium.ttf',
+  './testFonts/NotoSansLao-Regular.ttf',
+  './testFonts/NotoSansGeorgian-Regular.ttf',
+  './testFonts/NotoSansTibetan-Regular.ttf',
+  './testFonts/NotoSansTamil-Regular.ttf',
+  './testFonts/NotoSansTelugu-Regular.ttf',
+  './testFonts/NotoSansBengali-Regular.ttf',
+  './testFonts/NotoSansDevanagari-Regular.ttf',
+  './testFonts/NotoSansMalayalam-Regular.ttf',
+  './testFonts/NotoSansCJKtc-Regular.ttf',
+  './testFonts/arial-unicode-ms.ttf'
+]
 
-// buildFonts(fonts.map(font => { return { path: font, charset } }), './default.pbf')
+buildFonts(fonts.map(font => { return { path: font, charset } }), './default.pbf')
 
 // buildFonts(['./testFonts/NotoSans-Regular.ttf'], './default.pbf')
 
