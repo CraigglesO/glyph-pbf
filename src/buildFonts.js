@@ -154,6 +154,7 @@ function rescaleGlyph (glyph: Glyph): Glyph {
   }
 
   glyph.path = newPath
+  glyph.yOffset *= scale
 
   return glyph
 }
