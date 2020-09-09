@@ -1,5 +1,4 @@
 // @flow
-
 export function zigzag (num: number): number {
   return (num << 1) ^ (num >> 31)
 }

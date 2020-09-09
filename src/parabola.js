@@ -1,8 +1,10 @@
 // @flow
+export type Point = [number, number]
+
 export type Mat2d = [
-  [number, number],
-  [number, number],
-  [number, number]
+  Point,
+  Point,
+  Point
 ]
 
 export type Parabola = {
@@ -13,14 +15,14 @@ export type Parabola = {
 }
 
 export type SdfVertex = {
-  pos: [number, number],
-  par: [number, number],
-  limits: [number, number],
+  pos: Point,
+  par: Point,
+  limits: Point,
   scale: number
 }
 
-export function fromLine (p0: [number, number], p1: [number, number], lineWidth: number): Parabola {
-  // STEP 1: Build the parabola
+export function fromLine (p0: Point, p1: Point, lineWidth: number): Parabola {
+  // STEP 1: Build the "parabola"
   const PRECISION = 1e-16
 
   const p1p0 = [p1[0] - p0[0], p1[1] - p0[1]]
@@ -57,7 +59,47 @@ export function fromLine (p0: [number, number], p1: [number, number], lineWidth:
   return [v0, v1, v2, v0, v2, v3]
 }
 
-function setParVertex (par: Parabola, pos: [number, number]): SdfVertex {
+export function fromQuadratic (p0: Point, p1: Point, p2: Point): Parabola {
+  // STEP 1: Build the "parabola"
+  const pc = mix(p0, p2, 0.5)
+  const yaxis = normalize([pc[0] - p1[0], pc[1] - p1[1]])
+  const xaxis = perpRight(yaxis)
+
+  const p01 = normalize([p1[0] - p0[0], p1[1] - p0[1]])
+  const p12 = normalize([p2[0] - p1[0], p2[1] - p1[1]])
+  const cx0 = dot(xaxis, p01 )
+  const sx0 = dot(yaxis, p01 )
+  const cx2 = dot(xaxis, p12 )
+  const sx2 = dot(yaxis, p12 )
+
+  const x0 = sx0 / cx0 * 0.5
+  const x2 = sx2 / cx2 * 0.5
+  const y0 = x0 * x0
+
+  const p02x = dot([p2[0] - p0[0], p2[1] - p0[1]], xaxis)
+  const scale = p02x / (x2 - x0)
+  const vertex = [
+    p0[0] - y0 * scale * [0] - x0 * scale * xaxis[0],
+    p0[1] - y0 * scale * [1] - x0 * scale * xaxis[1],
+  ]
+
+  const par = {
+    scale: scale,
+    mat: [xAxis, yAxis, vertex]
+  }
+
+  if (x0 < x2) {
+    par.xstart = x0
+    par.xend = x2
+  } else {
+    par.xstart = x2
+    par.xend = x0
+  }
+
+  // TODO: STEP 2: Build quads according to the parabola
+}
+
+function setParVertex (par: Parabola, pos: Point): SdfVertex {
   return {
     pos,
     par: worldToPar(par, pos),
@@ -66,7 +108,7 @@ function setParVertex (par: Parabola, pos: [number, number]): SdfVertex {
   }
 }
 
-function worldToPar (par: Parabola, pos: [number, number]): [number, number] {
+function worldToPar (par: Parabola, pos: Point): Point {
   const is = 1 / par.scale
   const dpos = [pos[0] - par.mat[2][0], pos[1] - par.mat[2][1]]
   const r0 = [dpos[0] * par.mat[0][0], dpos[1] * par.mat[0][1]]
@@ -78,28 +120,28 @@ function worldToPar (par: Parabola, pos: [number, number]): [number, number] {
   ]
 }
 
-function min (a: [number, number], b: [number, number]): [number, number] {
+function min (a: Point, b: Point): Point {
   return [
     a[0] < b[0] ? a[0] : b[0],
     a[1] < b[1] ? a[1] : b[1]
   ]
 }
 
-function max (a: [number, number], b: [number, number]): [number, number] {
+function max (a: Point, b: Point): Point {
   return [
     a[0] > b[0] ? a[0] : b[0],
     a[1] > b[1] ? a[1] : b[1]
   ]
 }
 
-function mix (start: [number, number], end: [number, number], t: number): [number, number] {
+function mix (start: Point, end: Point, t: number): Point {
   return [
     start[0] * (1 - t) + end[0] * t,
     start[1] * (1 - t) + end[1] * t
   ]
 }
 
-function normalize (v: [number, number]): [number, number] {
+function normalize (v: Point): Point {
   const len = length(v)
   return [
     v[0] / len,
@@ -107,10 +149,18 @@ function normalize (v: [number, number]): [number, number] {
   ]
 }
 
-function length (v: [number, number]): number {
+function length (v: Point): number {
   return Math.sqrt(v[0] * v[0] + v[1] * v[1])
 }
 
-function perpLeft (v: [number, number]): [number, number] {
+function perpLeft (v: Point): Point {
   return [-v[1], v[0]]
+}
+
+function perpRight (v: Point): Point {
+  return [v[1], -v[0]]
+}
+
+function dot (v1: Point, v2: Point): number {
+  return v1[0] * v2[0] + v1[1] * v2[1]
 }

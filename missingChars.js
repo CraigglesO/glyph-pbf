@@ -3,11 +3,11 @@ const opentype = require('opentype.js')
 
 const charset = fs.readFileSync('./charset2.txt', 'utf8')
 
-const unicodes = new Set()
+const fontChars = new Set()
 
 const fonts = [
-  opentype.loadSync('./testFonts/NotoSans-Regular.ttf'),
   opentype.loadSync('./testFonts/NotoSansCJKtc-Regular.ttf'),
+  opentype.loadSync('./testFonts/NotoSans-Regular.ttf'),
   opentype.loadSync('./testFonts/NotoSansTifinagh-Regular.ttf'),
   opentype.loadSync('./testFonts/NotoSansEthiopic-Regular.ttf'),
   opentype.loadSync('./testFonts/NotoSansMyanmar-Regular.ttf'),
@@ -27,24 +27,21 @@ const fonts = [
   opentype.loadSync('./testFonts/NotoSansTelugu-Regular.ttf'),
   opentype.loadSync('./testFonts/NotoSansBengali-Regular.ttf'),
   opentype.loadSync('./testFonts/NotoSansDevanagari-Regular.ttf'),
-  opentype.loadSync('./testFonts/NotoSansMalayalam-Regular.ttf'),
-  opentype.loadSync('./testFonts/arial-unicode-ms.ttf')
+  opentype.loadSync('./testFonts/NotoSansMalayalam-Regular.ttf')
+  // opentype.loadSync('./testFonts/arial-unicode-ms.ttf')
 ]
 
 for (const font of fonts) {
-  const { glyphs } = font.glyphs
-
-  for (const key in glyphs) {
-    const glyph = glyphs[key]
-    const unicode = String.fromCharCode(glyph.unicode)
-    unicodes.add(unicode)
+  for (const char of charset) {
+    const glyph = font.charToGlyph(char)
+    if (glyph.index !== 0) fontChars.add(char)
   }
 }
 
 let missingChars = ''
 
 for (const char of charset) {
-  if (!unicodes.has(char)) missingChars += char
+  if (!fontChars.has(char)) missingChars += char
 }
 
 fs.writeFileSync('./missingChars.txt', missingChars)
