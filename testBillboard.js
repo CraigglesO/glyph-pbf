@@ -1,13 +1,13 @@
 const buildBillboards = require('./lib/buildBillboards').default
 
 const billboards = [
-  // './svgs2/airfield2.svg',
-  // './svgs2/aquarium2.svg',
-  // './svgs2/cafe2.svg',
-  // './svgs2/campsite2.svg',
-  // './svgs2/college2.svg',
-  // './svgs2/zoo2.svg'
-  './svgs2/test.svg'
+  './svgs2/airfield2.svg',
+  './svgs2/aquarium2.svg',
+  './svgs2/cafe2.svg',
+  './svgs2/campsite2.svg',
+  './svgs2/college2.svg',
+  './svgs2/zoo2.svg'
+  // './svgs2/test.svg'
 ]
 
 buildBillboards(billboards, 'billboards.pbf')
@@ -26,12 +26,12 @@ const glyphSet = new GlyphSet(pbf)
 // console.log('glyphSet', glyphSet)
 // console.log('zoo2', zoo2)
 
-const glyph = glyphSet.get('0')
+const glyph = glyphSet.get('1')
 
 // const path = glyph.getPath(false)
 // console.log('path', path)
 
-const { indices, vertices, quads, strokes } = glyph.getPath(true, [0, 0], 34, 0)
+const { indices, vertices, quads, strokes } = glyph.getPath(true, [0, 0], 34, 3)
 // console.log('indices', indices)
 // console.log('vertices', vertices, vertices.length / 3)
 // console.log('quads', quads)

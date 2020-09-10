@@ -84,7 +84,7 @@ export default function commandsToCode (commands: Array<Command>, extent: number
 function _arcCurve (extent: number, multiplier: number, startX: number, startY: number,
   endX: number, endY: number, rx: number, ry: number, angle: number,
   largeArcFlag: number, sweepFlag: number): Array<number> {
-  console.log('_arcCurve', extent, multiplier, startX, startY, endX, endY, rx, ry, angle, largeArcFlag, sweepFlag)
+  // console.log('_arcCurve', extent, multiplier, startX, startY, endX, endY, rx, ry, angle, largeArcFlag, sweepFlag)
   const code = []
   const curvePointCount = 7
   // https://www.w3.org/TR/SVG/implnote.html#ArcConversionEndpointToCenter

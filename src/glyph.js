@@ -33,7 +33,7 @@ export default class Glyph {
   }
 
   getPath (buildPath: boolean = true, offset?: [number, number] = [0, 0],
-    scale?: number = 34, cursorPos?: number = 4): Path {
+    scale?: number = 34, lineWidth?: number = 4): Path {
     // set position
     this._pbf.pos = this._path
     // find end
@@ -42,7 +42,7 @@ export default class Glyph {
     const path = []
     while (this._pbf.pos < end) path.push(zagzig(this._pbf.readVarint()))
     // if build, design a polygon, otherwise keep the commands
-    if (buildPath) return buildSDF(path, offset, scale, cursorPos, this.extent)
+    if (buildPath) return buildSDF(path, offset, scale, lineWidth, this.extent)
     else return path
   }
 }

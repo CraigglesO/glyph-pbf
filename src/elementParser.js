@@ -62,7 +62,7 @@ export default function parsePath (path: Path, billboard: Billboard, colors: Arr
 
     return instruction
   })
-  console.log('geo.instructions', geo.instructions)
+  // console.log('geo.instructions', geo.instructions)
   const [saveGeo, geoIndex] = _findDuplicateGeometry(geo, geometry)
   const [saveColor, colorIndex] = _findDuplicateColor(color, colors)
   // create feature

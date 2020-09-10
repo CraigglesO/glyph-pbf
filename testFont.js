@@ -31,9 +31,9 @@ const fonts = [
   './testFonts/NotoSansCJKtc-Regular.otf'
 ]
 
-buildFonts(fonts, charset + ' ', './default.pbf')
+// buildFonts(fonts, charset + ' ', './default.pbf')
 
-// buildFonts(['./testFonts/Roboto-Medium.ttf'], charset + ' ', './RobotoMedium.pbf')
+buildFonts(['./testFonts/Roboto-Medium.ttf'], charset + ' ', './RobotoMedium.pbf')
 // buildFonts(['./testFonts/Roboto-Regular.ttf'], charset + ' ', './RobotoRegular.pbf')
 
 // old RobotoMedium - 41K
@@ -46,9 +46,9 @@ const zlib = require('zlib')
 
 const GlyphSet = require('./lib/glyphSet').default
 
-const pbf = zlib.gunzipSync(fs.readFileSync('./default.pbf'))
+// const pbf = zlib.gunzipSync(fs.readFileSync('./default.pbf'))
 // const pbf = zlib.gunzipSync(fs.readFileSync('./testFont.pbf'))
-// const pbf = zlib.gunzipSync(fs.readFileSync('./RobotoMedium.pbf'))
+const pbf = zlib.gunzipSync(fs.readFileSync('./RobotoMedium.pbf'))
 
 console.time('build')
 const glyphSet = new GlyphSet(pbf)
@@ -72,14 +72,14 @@ console.time('getCode')
 // const glyph = glyphSet.get('ر')
 // const glyph = glyphSet.get('ൽ')
 // const glyph = glyphSet.get('死')
-const glyph = glyphSet.get('A')
+const glyph = glyphSet.get('S')
 // const glyph = glyphSet.get('ស')
 console.timeEnd('getCode')
 
 console.log('glyph', glyph)
 
 console.time('buildPath')
-const { indices, vertices, quads, strokes } = glyph.getPath(true, [0, 0], 34, 0)
+const { indices, vertices, quads, strokes } = glyph.getPath(true, [0, 0], 34, 1)
 // const { indices, vertices, quads, strokes } = glyph2.getPath(true, [glyph.advanceWidth, 0], 34, 1)
 console.timeEnd('buildPath')
 
@@ -100,6 +100,7 @@ let featureCollection = {
 }
 
 for (let i = 0, il = indices.length; i < il; i += 3) {
+  // console.log(vertices[indices[i] * 3 + 2], vertices[indices[i + 1] * 3 + 2], vertices[indices[i + 2] * 3 + 2])
   const feature = {
     type: 'Feature',
     properties: {},
@@ -125,6 +126,7 @@ const featureCollection2 = {
 }
 
 for (let i = 0, il = quads.length; i < il; i += 3) {
+  // console.log(vertices[quads[i] * 3 + 2], vertices[quads[i + 1] * 3 + 2], vertices[quads[i + 2] * 3 + 2])
   const feature = {
     type: 'Feature',
     properties: {},
