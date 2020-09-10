@@ -56,7 +56,7 @@ export function fromLine (p0: Point, p1: Point, lineWidth: number): Parabola {
   const v2 = setParVertex(par, [vmax[0], vmax[1]])
   const v3 = setParVertex(par, [vmin[0], vmax[1]])
 
-  return [v0, v1, v2, v0, v2, v3]
+  return [...v0, ...v1, ...v2, ...v0, ...v2, ...v3]
 }
 
 export function fromQuadratic (p0: Point, p1: Point, p2: Point): Parabola {
@@ -100,12 +100,12 @@ export function fromQuadratic (p0: Point, p1: Point, p2: Point): Parabola {
 }
 
 function setParVertex (par: Parabola, pos: Point): SdfVertex {
-  return {
-    pos,
-    par: worldToPar(par, pos),
-    limits: [par.xstart, par.xend],
-    scale: par.scale
-  }
+  return [
+    ...pos, // position
+    ...worldToPar(par, pos), // parabola
+    par.xstart, par.xend, // limits
+    par.scale // scale
+  ]
 }
 
 function worldToPar (par: Parabola, pos: Point): Point {

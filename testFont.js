@@ -83,7 +83,7 @@ const { indices, vertices, quads, strokes } = glyph.getPath(true, [0, 0], 34, 1)
 // const { indices, vertices, quads, strokes } = glyph2.getPath(true, [glyph.advanceWidth, 0], 34, 1)
 console.timeEnd('buildPath')
 
-// console.log('strokes', strokes)
+console.log('strokes', strokes)
 
 // console.log('getGlyph', getGlyph)
 
@@ -156,28 +156,26 @@ featureCollection = {
   features: []
 }
 
-strokes.forEach(stroke => {
-  for (let i = 0, sl = stroke.length; i < sl; i += 3) {
-    const v0 = stroke[i]
-    const v1 = stroke[i + 1]
-    const v2 = stroke[i + 2]
+for (let i = 0, sl = strokes.length; i < sl; i += 7 * 3) {
+  const v0 = [strokes[i], strokes[i + 1]]
+  const v1 = [strokes[i + 7], strokes[i + 8]]
+  const v2 = [strokes[i + 14], strokes[i + 15]]
 
-    const feature = {
-      type: 'Feature',
-      properties: {},
-      geometry: {
-        type: 'Polygon',
-        coordinates: [[
-          v0.pos,
-          v1.pos,
-          v2.pos,
-          v0.pos
-        ]]
-      }
+  const feature = {
+    type: 'Feature',
+    properties: {},
+    geometry: {
+      type: 'Polygon',
+      coordinates: [[
+        v0,
+        v1,
+        v2,
+        v0
+      ]]
     }
-
-    featureCollection.features.push(feature)
   }
-})
+
+  featureCollection.features.push(feature)
+}
 
 fs.writeFileSync('./strokes.json', JSON.stringify(featureCollection, null, 2))

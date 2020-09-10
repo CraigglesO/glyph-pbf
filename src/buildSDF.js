@@ -21,7 +21,7 @@ type Cursor = {
 export default function buildSDF (glyph: Array<number>, offset: [number, number],
   scale: number, lineWidth: number, extent: number): Path {
   // prep data containers
-  const res: Path = { vertices: [], indices: [], quads: [], strokes: [], stroke: [] }
+  const res: Path = { vertices: [], indices: [], quads: [], strokes: [] }
   // get length and prep variables
   let len = glyph.length
   const cursor: Cursor = { x0: 0, y0: 0, x: 0, y: 0, x1: 0, y1: 0, x2: 0, y2: 0, anchor: 0, indexPos: -1, lineWidth }
@@ -67,9 +67,7 @@ export default function buildSDF (glyph: Array<number>, offset: [number, number]
       _quadraticTo(cursor, res)
     } else if (cmd === 4) { // Close
       // store a final "lineTo" stroke
-      if (cursor.x0 !== ax || cursor.y0 !== ay) res.stroke.push(...fromLine([cursor.x0, cursor.y0], [ax, ay], lineWidth))
-      res.strokes.push(res.stroke)
-      res.stroke = []
+      if (cursor.x0 !== ax || cursor.y0 !== ay) res.strokes.push(...fromLine([cursor.x0, cursor.y0], [ax, ay], lineWidth))
     } else if (cmd === 5) { // moveTo delta
       ux0 += glyph[i++]
       uy0 += glyph[i++]
@@ -160,11 +158,11 @@ export default function buildSDF (glyph: Array<number>, offset: [number, number]
 function _lineTo (cursor: Cursor, res: Path) {
   // grab constants
   const { x0, y0, x, y, lineWidth, anchor } = cursor
-  const { vertices, indices, stroke } = res
+  const { vertices, indices, strokes } = res
   // store vertices
   vertices.push(x, y, 0)
   // store stroke
-  if (x0 !== x || y0 !== y) stroke.push(...fromLine([x0, y0], [x, y], lineWidth))
+  if (x0 !== x || y0 !== y) strokes.push(...fromLine([x0, y0], [x, y], lineWidth))
   // store indices, increment index to currentPos
   indices.push(anchor, cursor.indexPos++, cursor.indexPos)
   // update current to end
@@ -189,7 +187,7 @@ function _cubicTo (cursor: Cursor, res: Path) {
 function _quadraticTo (cursor: Cursor, res: Path) {
   // grab constants
   const { x0, y0, x1, y1, x, y, anchor, lineWidth } = cursor
-  const { vertices, indices, quads, stroke } = res
+  const { vertices, indices, quads, strokes } = res
   // store all vertex types: start quad, control point, end quad, end vertex
   vertices.push(
     x0, y0, 1, // start quadratic
@@ -212,7 +210,7 @@ function _quadraticTo (cursor: Cursor, res: Path) {
 
     xCurr = subT * subT * x0 + 2 * subT * t * x1 + t * t * x
     yCurr = subT * subT * y0 + 2 * subT * t * y1 + t * t * y
-    if (xPrev !== xCurr || yPrev !== yCurr) stroke.push(...fromLine([xPrev, yPrev], [xCurr, yCurr], lineWidth))
+    if (xPrev !== xCurr || yPrev !== yCurr) strokes.push(...fromLine([xPrev, yPrev], [xCurr, yCurr], lineWidth))
     xPrev = xCurr
     yPrev = yCurr
   }
