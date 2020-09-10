@@ -114,12 +114,12 @@ export default function buildSDF (glyph: Array<number>, offset: [number, number]
     } else if (cmd === 11) { // VerticalTo
       uy0 = glyph[i++]
       cursor.x = cursor.x0
-      cursor.y = uy0 / extent * scale + offset[0] + lineWidth
+      cursor.y = uy0 / extent * scale + offset[1] + lineWidth
       _lineTo(cursor, res)
     } else if (cmd === 12) { // VerticalTo delta
       uy0 += glyph[i++]
       cursor.x = cursor.x0
-      cursor.y = uy0 / extent * scale + offset[0] + lineWidth
+      cursor.y = uy0 / extent * scale + offset[1] + lineWidth
       _lineTo(cursor, res)
     } else if (cmd === 13) { // partialCubicBezierTo
       // TODO: flip x1 and y1

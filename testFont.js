@@ -72,18 +72,18 @@ console.time('getCode')
 // const glyph = glyphSet.get('ر')
 // const glyph = glyphSet.get('ൽ')
 // const glyph = glyphSet.get('死')
-const glyph = glyphSet.get('S')
+const glyph = glyphSet.get('U')
 // const glyph = glyphSet.get('ស')
 console.timeEnd('getCode')
 
 console.log('glyph', glyph)
 
 console.time('buildPath')
-const { indices, vertices, quads, strokes } = glyph.getPath(true, [0, 0], 34, 1)
+const { indices, vertices, quads, strokes } = glyph.getPath(true, [50, 10], 34, 1)
 // const { indices, vertices, quads, strokes } = glyph2.getPath(true, [glyph.advanceWidth, 0], 34, 1)
 console.timeEnd('buildPath')
 
-console.log('strokes', strokes)
+// console.log('strokes', strokes)
 
 // console.log('getGlyph', getGlyph)
 

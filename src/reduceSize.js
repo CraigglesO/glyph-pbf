@@ -51,10 +51,9 @@ export default function reduceSize (code: Array<number>): Array<number> {
       const dy2 = cursor.y2 - cursor.y0
       const dx = cursor.x - cursor.x0
       const dy = cursor.y - cursor.y0
-      // const smaller = zigzag(dx) < zigzag(cursor.x) && zigzag(dy) < zigzag(cursor.y)
-      // if (smaller) res.push(7, dx1, dy1, dx2, dy2, dx, dy)
-      // else res.push(2, cursor.x1, cursor.y1, cursor.x2, cursor.y2, cursor.x, cursor.y)
-      res.push(2, cursor.x1, cursor.y1, cursor.x2, cursor.y2, cursor.x, cursor.y)
+      const smaller = zigzag(dx) < zigzag(cursor.x) && zigzag(dy) < zigzag(cursor.y)
+      if (smaller) res.push(7, dx1, dy1, dx2, dy2, dx, dy)
+      else res.push(2, cursor.x1, cursor.y1, cursor.x2, cursor.y2, cursor.x, cursor.y)
       cursor.x0 = cursor.x
       cursor.y0 = cursor.y
     } else if (cmd === 3) { // quadraticBezierTo
@@ -66,10 +65,9 @@ export default function reduceSize (code: Array<number>): Array<number> {
       const dy1 = cursor.y1 - cursor.y0
       const dx = cursor.x - cursor.x0
       const dy = cursor.y - cursor.y0
-      // const smaller = zigzag(dx) < zigzag(cursor.x) && zigzag(dy) < zigzag(cursor.y)
-      // if (smaller) res.push(8, dx1, dy1, dx, dy)
-      // else res.push(3, cursor.x1, cursor.y1, cursor.x, cursor.y)
-      res.push(3, cursor.x1, cursor.y1, cursor.x, cursor.y)
+      const smaller = zigzag(dx) < zigzag(cursor.x) && zigzag(dy) < zigzag(cursor.y)
+      if (smaller) res.push(8, dx1, dy1, dx, dy)
+      else res.push(3, cursor.x1, cursor.y1, cursor.x, cursor.y)
       cursor.x0 = cursor.x
       cursor.y0 = cursor.y
     } else if (cmd === 4) { // close
