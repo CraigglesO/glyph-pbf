@@ -7,12 +7,7 @@ export type Mat2d = [
   Point
 ]
 
-export type Parabola = {
-  xstart: number,
-  xend: number,
-  scale: number,
-  mat: Mat2d
-}
+export type Parabola = Array<number>
 
 export type SdfVertex = {
   pos: Point,
@@ -22,6 +17,7 @@ export type SdfVertex = {
 }
 
 export function fromLine (p0: Point, p1: Point, lineWidth: number): Parabola {
+  if (p0[0] === p1[0] && p0[1] === p1[1]) return []
   // STEP 1: Build the "parabola"
   const PRECISION = 1e-16
 

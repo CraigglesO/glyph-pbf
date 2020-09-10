@@ -67,7 +67,7 @@ export default function buildSDF (glyph: Array<number>, offset: [number, number]
       _quadraticTo(cursor, res)
     } else if (cmd === 4) { // Close
       // store a final "lineTo" stroke
-      if (cursor.x0 !== ax || cursor.y0 !== ay) res.strokes.push(...fromLine([cursor.x0, cursor.y0], [ax, ay], lineWidth))
+      res.strokes.push(...fromLine([cursor.x0, cursor.y0], [ax, ay], lineWidth))
     } else if (cmd === 5) { // moveTo delta
       ux0 += glyph[i++]
       uy0 += glyph[i++]
@@ -162,7 +162,7 @@ function _lineTo (cursor: Cursor, res: Path) {
   // store vertices
   vertices.push(x, y, 0)
   // store stroke
-  if (x0 !== x || y0 !== y) strokes.push(...fromLine([x0, y0], [x, y], lineWidth))
+  strokes.push(...fromLine([x0, y0], [x, y], lineWidth))
   // store indices, increment index to currentPos
   indices.push(anchor, cursor.indexPos++, cursor.indexPos)
   // update current to end
@@ -210,7 +210,7 @@ function _quadraticTo (cursor: Cursor, res: Path) {
 
     xCurr = subT * subT * x0 + 2 * subT * t * x1 + t * t * x
     yCurr = subT * subT * y0 + 2 * subT * t * y1 + t * t * y
-    if (xPrev !== xCurr || yPrev !== yCurr) strokes.push(...fromLine([xPrev, yPrev], [xCurr, yCurr], lineWidth))
+    strokes.push(...fromLine([xPrev, yPrev], [xCurr, yCurr], lineWidth))
     xPrev = xCurr
     yPrev = yCurr
   }
