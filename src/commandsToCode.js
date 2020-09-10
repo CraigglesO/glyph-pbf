@@ -20,13 +20,13 @@ export type Code = { yOffset: number, path: Array<number> }
 export default function commandsToCode (commands: Array<Command>, extent: number,
   multiplier: number = -1, includeYOffset: boolean = true): Code {
   if (!commands.length) return { yOffset: 0, path: [] }
-  let prevX: number, prevY: number, same: number, yVal: number
+  let prevX: number = 0, prevY: number = 0, same: number, yVal: number
   let yOffset: number = Infinity
   const path = []
   commands.forEach(command => {
     const { type, x, y, x1, y1, x2, y2, rx, ry, xar, laf, sf } = command
-    same = (type !== 'V' && type !== 'v' && x === prevX) && (type !== 'H' && type !== 'h' && y === prevY)
-    if (type !== 'Z' && type !== 'H' && type !== 'h') {
+    same = type.toUpperCase() === type && x === prevX && y === prevY
+    if (type !== 'Z' && type.toUpperCase() !== 'H') {
       yVal = Math.round(multiplier * y * extent)
       yOffset = Math.min(yOffset, yVal)
     }
@@ -41,29 +41,29 @@ export default function commandsToCode (commands: Array<Command>, extent: number
     } else if (type === 'Z') { // close
       path.push(4)
     } else if (type === 'm') { // moveTo delta
-      if (!same) path.push(5, Math.round(x * extent), Math.round(multiplier * y * extent))
+      path.push(5, Math.round(x * extent), Math.round(multiplier * y * extent))
     } else if (type === 'l') { // lineTo delta
-      if (!same) path.push(6, Math.round(x * extent), Math.round(multiplier * y * extent))
+      path.push(6, Math.round(x * extent), Math.round(multiplier * y * extent))
     } else if (type === 'c') { // cubicBezierTo delta
-      if (!same) path.push(7, Math.round(x1 * extent), Math.round(multiplier * y1 * extent), Math.round(x2 * extent), Math.round(multiplier * y2 * extent), Math.round(x * extent), Math.round(multiplier * y * extent))
+      path.push(7, Math.round(x1 * extent), Math.round(multiplier * y1 * extent), Math.round(x2 * extent), Math.round(multiplier * y2 * extent), Math.round(x * extent), Math.round(multiplier * y * extent))
     } else if (type === 'q') { // quadraticBezierTo delta
-      if (!same) path.push(8, Math.round(x1 * extent), Math.round(multiplier * y1 * extent), Math.round(x * extent), Math.round(multiplier * y * extent))
+      path.push(8, Math.round(x1 * extent), Math.round(multiplier * y1 * extent), Math.round(x * extent), Math.round(multiplier * y * extent))
     } else if (type === 'H') { // horizontalTo
       if (!same) path.push(9, Math.round(x * extent))
     } else if (type === 'h') { // horizontalTo delta
-      if (!same) path.push(10, Math.round(x * extent))
+      path.push(10, Math.round(x * extent))
     } else if (type === 'V') { // VerticalTo
       if (!same) path.push(11, Math.round(multiplier * y * extent))
     } else if (type === 'v') { // VerticalTo delta
-      if (!same) path.push(12, Math.round(multiplier * y * extent))
+      path.push(12, Math.round(multiplier * y * extent))
     } else if (type === 'S') { // partialCubicBezierTo
       if (!same) path.push(13, Math.round(x2 * extent), Math.round(multiplier * y2 * extent), Math.round(x * extent), Math.round(multiplier * y * extent))
     } else if (type === 's') { // partialCubicBezierTo delta
-      if (!same) path.push(14, Math.round(x2 * extent), Math.round(multiplier * y2 * extent), Math.round(x * extent), Math.round(multiplier * y * extent))
+      path.push(14, Math.round(x2 * extent), Math.round(multiplier * y2 * extent), Math.round(x * extent), Math.round(multiplier * y * extent))
     } else if (type === 'T') { // partialQuadraticBezierTo
       if (!same) path.push(15, Math.round(x * extent), Math.round(multiplier * y * extent))
     } else if (type === 't') { // partialQuadraticBezierTo delta
-      if (!same) path.push(16, Math.round(x * extent), Math.round(multiplier * y * extent))
+      path.push(16, Math.round(x * extent), Math.round(multiplier * y * extent))
     } else if (type === 'A') {
       // convert to a set of lineTos
       // rx ry x-axis-rotation large-arc-flag sweep-flag x y
@@ -71,11 +71,19 @@ export default function commandsToCode (commands: Array<Command>, extent: number
     } else if (type === 'a') {
       // convert to a set of lineTos
       // rx ry x-axis-rotation large-arc-flag sweep-flag x y
-      if (!same) path.push(..._arcCurve(extent, multiplier, prevX, prevY, prevX + x, prevY + y, rx, ry, xar, laf, sf))
+      path.push(..._arcCurve(extent, multiplier, prevX, prevY, prevX + x, prevY + y, rx, ry, xar, laf, sf))
     }
     // update new previous x and y
-    if (type !== 'V' && type !== 'v') prevX = x
-    if (type !== 'H' && type !== 'h') prevY = y
+    if (type !== 'Z') {
+      if (type.toUpperCase() !== 'V') {
+        if (type === type.toUpperCase()) prevX = x
+        else prevX += x
+      }
+      if (type.toUpperCase() !== 'H') {
+        if (type === type.toUpperCase()) prevY = y
+        else prevY += y
+      }
+    }
   })
 
   return { yOffset: includeYOffset ? yOffset : null, path }
@@ -84,7 +92,6 @@ export default function commandsToCode (commands: Array<Command>, extent: number
 function _arcCurve (extent: number, multiplier: number, startX: number, startY: number,
   endX: number, endY: number, rx: number, ry: number, angle: number,
   largeArcFlag: number, sweepFlag: number): Array<number> {
-  // console.log('_arcCurve', extent, multiplier, startX, startY, endX, endY, rx, ry, angle, largeArcFlag, sweepFlag)
   const code = []
   const curvePointCount = 7
   // https://www.w3.org/TR/SVG/implnote.html#ArcConversionEndpointToCenter

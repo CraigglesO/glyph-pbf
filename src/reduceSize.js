@@ -118,7 +118,7 @@ export default function reduceSize (code: Array<number>): Array<number> {
       cursor.y = code[i++]
       res.push(12, cursor.y)
       cursor.y0 += cursor.y
-    } else if (cmd === 13) { // partialCubicBezierTo
+    } else if (cmd === 13) { // (S) partialCubicBezierTo
       cursor.x2 = code[i++]
       cursor.y2 = code[i++]
       cursor.x = code[i++]
@@ -126,7 +126,7 @@ export default function reduceSize (code: Array<number>): Array<number> {
       res.push(13, cursor.x2, cursor.y2, cursor.x, cursor.y)
       cursor.x0 = cursor.x
       cursor.y0 = cursor.y
-    } else if (cmd === 14) { // partialCubicBezierTo delta
+    } else if (cmd === 14) { // (s) partialCubicBezierTo delta
       cursor.x2 = code[i++]
       cursor.y2 = code[i++]
       cursor.x = code[i++]
@@ -134,13 +134,13 @@ export default function reduceSize (code: Array<number>): Array<number> {
       res.push(14, cursor.x2, cursor.y2, cursor.x, cursor.y)
       cursor.x0 += cursor.x
       cursor.y0 += cursor.y
-    } else if (cmd === 15) { // partialQuadraticBezierTo
+    } else if (cmd === 15) { // (T) partialQuadraticBezierTo
       cursor.x = code[i++]
       cursor.y = code[i++]
       res.push(15, cursor.x, cursor.y)
       cursor.x0 = cursor.x
       cursor.y0 = cursor.y
-    } else if (cmd === 16) { // partialQuadraticBezierTo delta
+    } else if (cmd === 16) { // (t) partialQuadraticBezierTo delta
       cursor.x = code[i++]
       cursor.y = code[i++]
       res.push(16, cursor.x, cursor.y)

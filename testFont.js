@@ -31,15 +31,17 @@ const fonts = [
   './testFonts/NotoSansCJKtc-Regular.otf'
 ]
 
-// buildFonts(fonts, charset + ' ', './default.pbf')
+buildFonts(fonts, charset + ' ', './default.pbf')
 
 buildFonts(['./testFonts/Roboto-Medium.ttf'], charset + ' ', './RobotoMedium.pbf')
-// buildFonts(['./testFonts/Roboto-Regular.ttf'], charset + ' ', './RobotoRegular.pbf')
+buildFonts(['./testFonts/Roboto-Regular.ttf'], charset + ' ', './RobotoRegular.pbf')
 
+// old default 1.4M
+// new default 1.0M
 // old RobotoMedium - 41K
-// new RobotoMedium - 30K
+// new RobotoMedium - 29K
 // old RobotoRegular - 42K
-// new RobotoRegular - 29K
+// new RobotoRegular - 28K
 
 // const fs = require('fs')
 const zlib = require('zlib')

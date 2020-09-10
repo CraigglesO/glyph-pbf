@@ -26,7 +26,7 @@ export default function buildSDF (glyph: Array<number>, offset: [number, number]
   let len = glyph.length
   const cursor: Cursor = { x0: 0, y0: 0, x: 0, y: 0, x1: 0, y1: 0, x2: 0, y2: 0, anchor: 0, indexPos: -1, lineWidth }
   let i = 0
-  let cmd, ux0, uy0, ax, ay // unmodifiedX0, unmodifiedY0, anchorX, anchorY
+  let cmd, ux0 = 0, uy0 = 0, ax = 0, ay = 0 // unmodifiedX0, unmodifiedY0, anchorX, anchorY
 
   while (i < len) {
     // get new command
@@ -39,7 +39,7 @@ export default function buildSDF (glyph: Array<number>, offset: [number, number]
       cursor.y0 = uy0 / extent * scale + offset[1] + lineWidth
       ax = cursor.x0
       ay = cursor.y0
-      res.vertices.push(cursor.x0, cursor.y0, 0)
+      res.vertices.push(ax, ay, 0)
       cursor.anchor = ++cursor.indexPos
     } else if (cmd === 1) { // lineTo
       ux0 = glyph[i++]
@@ -75,7 +75,7 @@ export default function buildSDF (glyph: Array<number>, offset: [number, number]
       cursor.y0 = uy0 / extent * scale + offset[1] + lineWidth
       ax = cursor.x0
       ay = cursor.y0
-      res.vertices.push(cursor.x0, cursor.y0, 0)
+      res.vertices.push(ax, ay, 0)
       cursor.anchor = ++cursor.indexPos
     } else if (cmd === 6) { // lineTo delta
       ux0 += glyph[i++]
@@ -121,29 +121,37 @@ export default function buildSDF (glyph: Array<number>, offset: [number, number]
       cursor.x = cursor.x0
       cursor.y = uy0 / extent * scale + offset[1] + lineWidth
       _lineTo(cursor, res)
-    } else if (cmd === 13) { // partialCubicBezierTo
-      // TODO: flip x1 and y1
+    } else if (cmd === 13) { // (S) partialCubicBezierTo
+      cursor.x1 = cursor.x0 + (cursor.x0 - cursor.x1)
+      cursor.y1 = cursor.y0 + (cursor.y0 - cursor.y1)
       cursor.x2 = glyph[i++] / extent * scale + offset[0] + lineWidth
       cursor.y2 = glyph[i++] / extent * scale + offset[1] + lineWidth
-      cursor.x = glyph[i++] / extent * scale + offset[0] + lineWidth
-      cursor.y = glyph[i++] / extent * scale + offset[1] + lineWidth
+      ux0 = glyph[i++]
+      uy0 = glyph[i++]
+      cursor.x = ux0 / extent * scale + offset[0] + lineWidth
+      cursor.y = uy0 / extent * scale + offset[1] + lineWidth
       _cubicTo(cursor, res)
-    } else if (cmd === 14) { // partialCubicBezierTod delta
-      // TODO: flip x1 and y1
-      cursor.x2 = cursor.x0 + (glyph[i++] / extent * scale + offset[0] + lineWidth)
-      cursor.y2 = cursor.y0 + (glyph[i++] / extent * scale + offset[1] + lineWidth)
+    } else if (cmd === 14) { // (s) partialCubicBezierTo delta
+      cursor.x1 = cursor.x0 + (cursor.x0 - cursor.x1)
+      cursor.y1 = cursor.y0 + (cursor.y0 - cursor.y1)
+      cursor.x2 = (ux0 + glyph[i++]) / extent * scale + offset[0] + lineWidth
+      cursor.y2 = (uy0 + glyph[i++]) / extent * scale + offset[1] + lineWidth
       ux0 += glyph[i++]
       uy0 += glyph[i++]
-      cursor.x = (ux0 + glyph[i++]) / extent * scale + offset[0] + lineWidth
-      cursor.y = (uy0 + glyph[i++]) / extent * scale + offset[1] + lineWidth
+      cursor.x = ux0 / extent * scale + offset[0] + lineWidth
+      cursor.y = uy0 / extent * scale + offset[1] + lineWidth
       _cubicTo(cursor, res)
-    } else if (cmd === 15) { // partialQuadraticBezierTo
-      // TODO: flip x1 and y1
-      cursor.x = glyph[i++] / extent * scale + offset[0] + lineWidth
-      cursor.y = glyph[i++] / extent * scale + offset[1] + lineWidth
+    } else if (cmd === 15) { // (T) partialQuadraticBezierTo
+      cursor.x1 = cursor.x0 + (cursor.x0 - cursor.x1)
+      cursor.y1 = cursor.y0 + (cursor.y0 - cursor.y1)
+      ux0 = glyph[i++]
+      uy0 = glyph[i++]
+      cursor.x = ux0 / extent * scale + offset[0] + lineWidth
+      cursor.y = uy0 / extent * scale + offset[1] + lineWidth
       _quadraticTo(cursor, res)
-    } else if (cmd === 16) { // partialQuadraticBezierTo delta
-      // TODO: flip x1 and y1
+    } else if (cmd === 16) { // (t) partialQuadraticBezierTo delta
+      cursor.x1 = cursor.x0 + (cursor.x0 - cursor.x1)
+      cursor.y1 = cursor.y0 + (cursor.y0 - cursor.y1)
       ux0 += glyph[i++]
       uy0 += glyph[i++]
       cursor.x = ux0 / extent * scale + offset[0] + lineWidth

@@ -34,7 +34,7 @@ export type Billboard = {
 const PARSE_OPTIONS = { parseAttributeValue: true, ignoreAttributes: false, attributeNamePrefix: '' }
 
 export default function buildBillboards (paths: Array<string>, out: string, options?: Options) {
-  options = { ...options, extent: 1024 }
+  options = { ...options, extent: 4096 }
   let geometry: Array<Geometry> = []
   const billboards: Array<Billboard> = []
   let colors: Array<Color> = []

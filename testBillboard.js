@@ -1,13 +1,13 @@
 const buildBillboards = require('./lib/buildBillboards').default
 
 const billboards = [
-  './svgs2/airfield2.svg',
-  './svgs2/aquarium2.svg',
-  './svgs2/cafe2.svg',
-  './svgs2/campsite2.svg',
-  './svgs2/college2.svg',
-  './svgs2/zoo2.svg'
-  // './svgs2/test.svg'
+  // './svgs2/airfield2.svg',
+  // './svgs2/aquarium2.svg',
+  // './svgs2/cafe2.svg',
+  // './svgs2/campsite2.svg',
+  // './svgs2/college2.svg',
+  // './svgs2/zoo2.svg'
+  './svgs2/test.svg'
 ]
 
 buildBillboards(billboards, 'billboards.pbf')
@@ -26,12 +26,12 @@ const glyphSet = new GlyphSet(pbf)
 // console.log('glyphSet', glyphSet)
 // console.log('zoo2', zoo2)
 
-const glyph = glyphSet.get('1')
+const glyph = glyphSet.get('0')
 
 // const path = glyph.getPath(false)
 // console.log('path', path)
 
-const { indices, vertices, quads, strokes } = glyph.getPath(true, [0, 0], 34, 3)
+const { indices, vertices, quads, strokes } = glyph.getPath(true, [0, 0], 34, 0.5)
 // console.log('indices', indices)
 // console.log('vertices', vertices, vertices.length / 3)
 // console.log('quads', quads)
@@ -92,28 +92,26 @@ featureCollection = {
   features: []
 }
 
-strokes.forEach(stroke => {
-  for (let i = 0, sl = stroke.length; i < sl; i += 3) {
-    const v0 = stroke[i]
-    const v1 = stroke[i + 1]
-    const v2 = stroke[i + 2]
+for (let i = 0, sl = strokes.length; i < sl; i += 7 * 3) {
+  const v0 = [strokes[i], strokes[i + 1]]
+  const v1 = [strokes[i + 7], strokes[i + 8]]
+  const v2 = [strokes[i + 14], strokes[i + 15]]
 
-    const feature = {
-      type: 'Feature',
-      properties: {},
-      geometry: {
-        type: 'Polygon',
-        coordinates: [[
-          v0.pos,
-          v1.pos,
-          v2.pos,
-          v0.pos
-        ]]
-      }
+  const feature = {
+    type: 'Feature',
+    properties: {},
+    geometry: {
+      type: 'Polygon',
+      coordinates: [[
+        v0,
+        v1,
+        v2,
+        v0
+      ]]
     }
-
-    featureCollection.features.push(feature)
   }
-})
+
+  featureCollection.features.push(feature)
+}
 
 fs.writeFileSync('./strokes.json', JSON.stringify(featureCollection, null, 2))
