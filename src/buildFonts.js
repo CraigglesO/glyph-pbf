@@ -52,7 +52,7 @@ function buildGlyphSet (fonts: Array<Font>, charset: string, extent: number): Ma
         // we build
         let { index, advanceWidth } = glyph
         const code = commandsToCode(glyph.getPath(0, 0, 1).commands, extent)
-        if (!advanceWidth || !code) continue
+        if (!advanceWidth) continue
         const unicode = char.charCodeAt(0)
         const { yOffset, path } = code
         // build out necessary components of glyph

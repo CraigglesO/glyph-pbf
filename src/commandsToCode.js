@@ -19,7 +19,7 @@ export type Code = { yOffset: number, path: Array<number> }
 // https://developer.mozilla.org/en-US/docs/Web/SVG/Tutorial/Paths
 export default function commandsToCode (commands: Array<Command>, extent: number,
   multiplier: number = -1, includeYOffset: boolean = true): Code {
-  if (!commands.length) return null
+  if (!commands.length) return { yOffset: 0, path: [] }
   let prevX: number, prevY: number, same: number, yVal: number
   let yOffset: number = Infinity
   const path = []

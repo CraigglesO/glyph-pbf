@@ -31,9 +31,9 @@ const fonts = [
   './testFonts/NotoSansCJKtc-Regular.otf'
 ]
 
-// buildFonts(fonts, charset, './default.pbf')
+buildFonts(fonts, charset + ' ', './default.pbf')
 
-buildFonts(['./testFonts/Roboto-Medium.ttf'], charset + ' ', './RobotoMedium.pbf')
+// buildFonts(['./testFonts/Roboto-Medium.ttf'], charset + ' ', './RobotoMedium.pbf')
 // buildFonts(['./testFonts/Roboto-Regular.ttf'], charset + ' ', './RobotoRegular.pbf')
 
 // old RobotoMedium - 41K
@@ -46,9 +46,9 @@ const zlib = require('zlib')
 
 const GlyphSet = require('./lib/glyphSet').default
 
-// const pbf = zlib.gunzipSync(fs.readFileSync('./default.pbf'))
+const pbf = zlib.gunzipSync(fs.readFileSync('./default.pbf'))
 // const pbf = zlib.gunzipSync(fs.readFileSync('./testFont.pbf'))
-const pbf = zlib.gunzipSync(fs.readFileSync('./RobotoMedium.pbf'))
+// const pbf = zlib.gunzipSync(fs.readFileSync('./RobotoMedium.pbf'))
 
 console.time('build')
 const glyphSet = new GlyphSet(pbf)
@@ -72,7 +72,7 @@ console.time('getCode')
 // const glyph = glyphSet.get('ر')
 // const glyph = glyphSet.get('ൽ')
 // const glyph = glyphSet.get('死')
-const glyph = glyphSet.get(' ')
+const glyph = glyphSet.get('A')
 // const glyph = glyphSet.get('ស')
 console.timeEnd('getCode')
 
