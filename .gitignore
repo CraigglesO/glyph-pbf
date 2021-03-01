@@ -2,8 +2,12 @@ node_modules
 lib
 testFonts
 *.pbf
+*.pbf.br
 poly.json
 quad.json
 strokes.json
 test.json
 svgs2
+experiment
+icons
+placeCharset.txt

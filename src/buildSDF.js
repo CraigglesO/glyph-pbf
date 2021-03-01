@@ -19,7 +19,7 @@ type Cursor = {
 }
 
 export default function buildSDF (glyph: Array<number>, offset: [number, number],
-  scale: number, lineWidth: number, extent: number): Path {
+  scale: number, lineWidth: number, extent: number, ratio: number): Path {
   // prep data containers
   const res: Path = { vertices: [], indices: [], quads: [], strokes: [] }
   // get length and prep variables
@@ -35,7 +35,7 @@ export default function buildSDF (glyph: Array<number>, offset: [number, number]
     if (cmd === 0) { // moveTo
       ux0 = glyph[i++]
       uy0 = glyph[i++]
-      cursor.x0 = ux0 / extent * scale + offset[0] + lineWidth
+      cursor.x0 = ux0 / extent * ratio * scale + offset[0] + lineWidth
       cursor.y0 = uy0 / extent * scale + offset[1] + lineWidth
       ax = cursor.x0
       ay = cursor.y0
@@ -44,25 +44,25 @@ export default function buildSDF (glyph: Array<number>, offset: [number, number]
     } else if (cmd === 1) { // lineTo
       ux0 = glyph[i++]
       uy0 = glyph[i++]
-      cursor.x = ux0 / extent * scale + offset[0] + lineWidth
+      cursor.x = ux0 / extent * ratio * scale + offset[0] + lineWidth
       cursor.y = uy0 / extent * scale + offset[1] + lineWidth
       _lineTo(cursor, res)
     } else if (cmd === 2) { // cubicBezierTo
-      cursor.x1 = glyph[i++] / extent * scale + offset[0] + lineWidth
+      cursor.x1 = glyph[i++] / extent * ratio * scale + offset[0] + lineWidth
       cursor.y1 = glyph[i++] / extent * scale + offset[1] + lineWidth
-      cursor.x2 = glyph[i++] / extent * scale + offset[0] + lineWidth
+      cursor.x2 = glyph[i++] / extent * ratio * scale + offset[0] + lineWidth
       cursor.y2 = glyph[i++] / extent * scale + offset[1] + lineWidth
       ux0 = glyph[i++]
       uy0 = glyph[i++]
-      cursor.x = ux0 / extent * scale + offset[0] + lineWidth
+      cursor.x = ux0 / extent * ratio * scale + offset[0] + lineWidth
       cursor.y = uy0 / extent * scale + offset[1] + lineWidth
       _cubicTo(cursor, res)
     } else if (cmd === 3) { // quadraticBezierTo
-      cursor.x1 = glyph[i++] / extent * scale + offset[0] + lineWidth
+      cursor.x1 = glyph[i++] / extent * ratio * scale + offset[0] + lineWidth
       cursor.y1 = glyph[i++] / extent * scale + offset[1] + lineWidth
       ux0 = glyph[i++]
       uy0 = glyph[i++]
-      cursor.x = ux0 / extent * scale + offset[0] + lineWidth
+      cursor.x = ux0 / extent * ratio * scale + offset[0] + lineWidth
       cursor.y = uy0 / extent * scale + offset[1] + lineWidth
       _quadraticTo(cursor, res)
     } else if (cmd === 4) { // Close
@@ -71,7 +71,7 @@ export default function buildSDF (glyph: Array<number>, offset: [number, number]
     } else if (cmd === 5) { // moveTo delta
       ux0 += glyph[i++]
       uy0 += glyph[i++]
-      cursor.x0 = ux0 / extent * scale + offset[0] + lineWidth
+      cursor.x0 = ux0 / extent * ratio * scale + offset[0] + lineWidth
       cursor.y0 = uy0 / extent * scale + offset[1] + lineWidth
       ax = cursor.x0
       ay = cursor.y0
@@ -80,35 +80,35 @@ export default function buildSDF (glyph: Array<number>, offset: [number, number]
     } else if (cmd === 6) { // lineTo delta
       ux0 += glyph[i++]
       uy0 += glyph[i++]
-      cursor.x = ux0 / extent * scale + offset[0] + lineWidth
+      cursor.x = ux0 / extent * ratio * scale + offset[0] + lineWidth
       cursor.y = uy0 / extent * scale + offset[1] + lineWidth
       _lineTo(cursor, res)
     } else if (cmd === 7) { // cubicBezierTo delta
-      cursor.x1 = (ux0 + glyph[i++]) / extent * scale + offset[0] + lineWidth
+      cursor.x1 = (ux0 + glyph[i++]) / extent * ratio * scale + offset[0] + lineWidth
       cursor.y1 = (uy0 + glyph[i++]) / extent * scale + offset[1] + lineWidth
-      cursor.x2 = (ux0 + glyph[i++]) / extent * scale + offset[0] + lineWidth
+      cursor.x2 = (ux0 + glyph[i++]) / extent * ratio * scale + offset[0] + lineWidth
       cursor.y2 = (uy0 + glyph[i++]) / extent * scale + offset[1] + lineWidth
       ux0 += glyph[i++]
       uy0 += glyph[i++]
-      cursor.x = ux0 / extent * scale + offset[0] + lineWidth
+      cursor.x = ux0 / extent * ratio * scale + offset[0] + lineWidth
       cursor.y = uy0 / extent * scale + offset[1] + lineWidth
       _cubicTo(cursor, res)
     } else if (cmd === 8) { // quadraticBezierTo delta
-      cursor.x1 = (ux0 + glyph[i++]) / extent * scale + offset[0] + lineWidth
+      cursor.x1 = (ux0 + glyph[i++]) / extent * ratio * scale + offset[0] + lineWidth
       cursor.y1 = (uy0 + glyph[i++]) / extent * scale + offset[1] + lineWidth
       ux0 += glyph[i++]
       uy0 += glyph[i++]
-      cursor.x = ux0 / extent * scale + offset[0] + lineWidth
+      cursor.x = ux0 / extent * ratio * scale + offset[0] + lineWidth
       cursor.y = uy0 / extent * scale + offset[1] + lineWidth
       _quadraticTo(cursor, res)
     } else if (cmd === 9) { // horizontalTo
       ux0 = glyph[i++]
-      cursor.x = ux0 / extent * scale + offset[0] + lineWidth
+      cursor.x = ux0 / extent * ratio * scale + offset[0] + lineWidth
       cursor.y = cursor.y0
       _lineTo(cursor, res)
     } else if (cmd === 10) { // horizontalTo delta
       ux0 += glyph[i++]
-      cursor.x = ux0 / extent * scale + offset[0] + lineWidth
+      cursor.x = ux0 / extent * ratio * scale + offset[0] + lineWidth
       cursor.y = cursor.y0
       _lineTo(cursor, res)
     } else if (cmd === 11) { // VerticalTo
@@ -124,21 +124,21 @@ export default function buildSDF (glyph: Array<number>, offset: [number, number]
     } else if (cmd === 13) { // (S) partialCubicBezierTo
       cursor.x1 = cursor.x0 + (cursor.x0 - cursor.x1)
       cursor.y1 = cursor.y0 + (cursor.y0 - cursor.y1)
-      cursor.x2 = glyph[i++] / extent * scale + offset[0] + lineWidth
+      cursor.x2 = glyph[i++] / extent * ratio * scale + offset[0] + lineWidth
       cursor.y2 = glyph[i++] / extent * scale + offset[1] + lineWidth
       ux0 = glyph[i++]
       uy0 = glyph[i++]
-      cursor.x = ux0 / extent * scale + offset[0] + lineWidth
+      cursor.x = ux0 / extent * ratio * scale + offset[0] + lineWidth
       cursor.y = uy0 / extent * scale + offset[1] + lineWidth
       _cubicTo(cursor, res)
     } else if (cmd === 14) { // (s) partialCubicBezierTo delta
       cursor.x1 = cursor.x0 + (cursor.x0 - cursor.x1)
       cursor.y1 = cursor.y0 + (cursor.y0 - cursor.y1)
-      cursor.x2 = (ux0 + glyph[i++]) / extent * scale + offset[0] + lineWidth
+      cursor.x2 = (ux0 + glyph[i++]) / extent * ratio * scale + offset[0] + lineWidth
       cursor.y2 = (uy0 + glyph[i++]) / extent * scale + offset[1] + lineWidth
       ux0 += glyph[i++]
       uy0 += glyph[i++]
-      cursor.x = ux0 / extent * scale + offset[0] + lineWidth
+      cursor.x = ux0 / extent * ratio * scale + offset[0] + lineWidth
       cursor.y = uy0 / extent * scale + offset[1] + lineWidth
       _cubicTo(cursor, res)
     } else if (cmd === 15) { // (T) partialQuadraticBezierTo
@@ -146,7 +146,7 @@ export default function buildSDF (glyph: Array<number>, offset: [number, number]
       cursor.y1 = cursor.y0 + (cursor.y0 - cursor.y1)
       ux0 = glyph[i++]
       uy0 = glyph[i++]
-      cursor.x = ux0 / extent * scale + offset[0] + lineWidth
+      cursor.x = ux0 / extent * ratio * scale + offset[0] + lineWidth
       cursor.y = uy0 / extent * scale + offset[1] + lineWidth
       _quadraticTo(cursor, res)
     } else if (cmd === 16) { // (t) partialQuadraticBezierTo delta
@@ -154,7 +154,7 @@ export default function buildSDF (glyph: Array<number>, offset: [number, number]
       cursor.y1 = cursor.y0 + (cursor.y0 - cursor.y1)
       ux0 += glyph[i++]
       uy0 += glyph[i++]
-      cursor.x = ux0 / extent * scale + offset[0] + lineWidth
+      cursor.x = ux0 / extent * ratio * scale + offset[0] + lineWidth
       cursor.y = uy0 / extent * scale + offset[1] + lineWidth
       _quadraticTo(cursor, res)
     }

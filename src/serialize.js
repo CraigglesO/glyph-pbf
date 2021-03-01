@@ -31,12 +31,14 @@ function writeGlyphSet (extent: number, glyphs: Map, kernSet: KernSet, type: Gly
 }
 
 function writeGlyph (glyph: Glyph, pbf: Protobuf) {
-  const [unicode, { advanceWidth, yOffset, path }] = glyph
+  const [unicode, { advanceWidth, yOffset, path, ratio }] = glyph
 
   pbf.writeVarintField(1, unicode)
   if (advanceWidth) pbf.writeVarintField(2, advanceWidth)
   if (yOffset) pbf.writeVarintField(3, yOffset)
   pbf.writeMessage(4, writePath, path)
+  // incase a billboard, the glyph needs a width-to-height ratio to properly build its shape
+  if (ratio) pbf.writeFloatField(5, ratio)
 }
 
 function writeColor (color: Color, pbf: Protobuf) {

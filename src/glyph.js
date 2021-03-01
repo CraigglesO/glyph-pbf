@@ -16,6 +16,7 @@ export default class Glyph {
   char: string
   advanceWidth: number
   yOffset: number = 0
+  ratio: number = 1
   _path: number
   _pbf: Protobuf
   extent: number
@@ -30,6 +31,7 @@ export default class Glyph {
     else if (tag === 2) glyph.advanceWidth = pbf.readVarint() / glyph.extent
     else if (tag === 3) glyph.yOffset = pbf.readVarint() / glyph.extent
     else if (tag === 4) glyph._path = pbf.pos
+    else if (tag === 5) glyph.ratio = pbf.readFloat()
   }
 
   getPath (buildPath: boolean = true, offset?: [number, number] = [0, 0],
@@ -42,7 +44,7 @@ export default class Glyph {
     const path = []
     while (this._pbf.pos < end) path.push(zagzig(this._pbf.readVarint()))
     // if build, design a polygon, otherwise keep the commands
-    if (buildPath) return buildSDF(path, offset, scale, lineWidth, this.extent)
+    if (buildPath) return buildSDF(path, offset, scale, lineWidth, this.extent, this.ratio)
     else return path
   }
 }

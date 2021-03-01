@@ -4,10 +4,15 @@ fixtures
 proto
 testFont.js
 testBillboard.js
-*.pbf
+testPathParser.js
 testFonts
+*.pbf
+*.pbf.br
 poly.json
 quad.json
 strokes.json
 test.json
 svgs2
+experiment
+icons
+placeCharset.txt

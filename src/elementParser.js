@@ -30,7 +30,6 @@ export default function parsePath (path: Path, billboard: Billboard, colors: Arr
     height: billboard.height,
     instructions: []
   }
-  const maxAspect = (geo.width > geo.height) ? geo.width : geo.height
   // prep knowledge of x or y
   let xTurn = true
   // create the geometry with commands, convert all capital commands to lower-case
@@ -43,14 +42,14 @@ export default function parsePath (path: Path, billboard: Billboard, colors: Arr
       instruction.laf = instruction.largeArc
       instruction.sf = instruction.sweep
     }
-    if (instruction.x) instruction.x /= maxAspect
-    if (instruction.y) instruction.y /= maxAspect
-    if (instruction.x1) instruction.x1 /= maxAspect
-    if (instruction.y1) instruction.y1 /= maxAspect
-    if (instruction.x2) instruction.x2 /= maxAspect
-    if (instruction.y2) instruction.y2 /= maxAspect
-    if (instruction.rx) instruction.rx /= maxAspect
-    if (instruction.ry) instruction.ry /= -maxAspect
+    if (instruction.x) instruction.x /= geo.width
+    if (instruction.y) instruction.y /= geo.height
+    if (instruction.x1) instruction.x1 /= geo.width
+    if (instruction.y1) instruction.y1 /= geo.height
+    if (instruction.x2) instruction.x2 /= geo.width
+    if (instruction.y2) instruction.y2 /= geo.height
+    if (instruction.rx) instruction.rx /= geo.width
+    if (instruction.ry) instruction.ry /= -geo.height
     if (!instruction.relative) {
       if (instruction.y) instruction.y = 1 - instruction.y
       if (instruction.y1) instruction.y1 = 1 - instruction.y1

@@ -1,6 +1,7 @@
 // @flow
 import fs from 'fs'
 import { gzipSync } from 'zlib'
+import brotli from 'brotli'
 import * as opentype from 'opentype.js'
 import commandsToCode from './commandsToCode'
 import reduceSize from './reduceSize'
@@ -29,8 +30,14 @@ export default function buildFonts (fonts: Array<string>, charset: string, out: 
   const [glyphMap, kernSet] = buildGlyphSet(fonts, charset, extent)
   // step 2, build the pbf
   const pbf = serialize(extent, glyphMap, kernSet, 'font')
-  // step 3, gzip compress and save
+  // step 3, gzip and brotli compress and save
+  const br = brotli.compress(pbf, {
+    mode: 0, // 0 = generic, 1 = text, 2 = font (WOFF2)
+    quality: 11, // 0 - 11
+    lgwin: 32 // window size
+  })
   fs.writeFileSync(out, gzipSync(pbf))
+  fs.writeFileSync(out + '.br', br)
 }
 
 function buildGlyphSet (fonts: Array<Font>, charset: string, extent: number): Map {

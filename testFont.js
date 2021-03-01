@@ -1,40 +1,42 @@
 const fs = require('fs')
 const buildFonts = require('./lib/buildFonts').default
-const charset = fs.readFileSync('./charset4.txt', 'utf8')
+let charset = fs.readFileSync('./placeCharset.txt', 'utf8')
 
-const fonts = [
-  './testFonts/NotoSans-Regular.ttf',
-  './testFonts/NotoSansTifinagh-Regular.ttf',
-  './testFonts/NotoSansEthiopic-Regular.ttf',
-  './testFonts/NotoSansMyanmar-Regular.ttf',
-  './testFonts/NotoSansKhmer-Regular.ttf',
-  './testFonts/NotoSansMongolian-Regular.ttf',
-  './testFonts/NotoSansCanadianAboriginal-Regular.ttf',
-  './testFonts/NotoSansNKo-Regular.ttf',
-  './testFonts/NotoSansArmenian-Regular.ttf',
-  './testFonts/NotoSansHebrew-Regular.ttf',
-  './testFonts/NotoSansKannada-Regular.ttf',
-  './testFonts/NotoSansThai-Regular.ttf',
-  './testFonts/NotoSansArabic-Medium.ttf',
-  './testFonts/NotoSansLao-Regular.ttf',
-  './testFonts/NotoSansGeorgian-Regular.ttf',
-  './testFonts/NotoSansTibetan-Regular.ttf',
-  './testFonts/NotoSansTamil-Regular.ttf',
-  './testFonts/NotoSansTelugu-Regular.ttf',
-  './testFonts/NotoSansBengali-Regular.ttf',
-  './testFonts/NotoSansDevanagari-Regular.ttf',
-  './testFonts/NotoSansMalayalam-Regular.ttf',
-  './testFonts/NotoSansCJKtc-Regular.ttf',
-  './testFonts/NotoSansCJKjp-Regular.otf',
-  './testFonts/NotoSansCJKkr-Regular.otf',
-  './testFonts/NotoSansCJKsc-Regular.otf',
-  './testFonts/NotoSansCJKtc-Regular.otf'
-]
+charset += ' !"#$%&\'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~'
 
-buildFonts(fonts, charset + ' ', './default.pbf')
-
-buildFonts(['./testFonts/Roboto-Medium.ttf'], charset + ' ', './RobotoMedium.pbf')
-buildFonts(['./testFonts/Roboto-Regular.ttf'], charset + ' ', './RobotoRegular.pbf')
+// const fonts = [
+//   './testFonts/NotoSans-Regular.ttf',
+//   './testFonts/NotoSansTifinagh-Regular.ttf',
+//   './testFonts/NotoSansEthiopic-Regular.ttf',
+//   './testFonts/NotoSansMyanmar-Regular.ttf',
+//   './testFonts/NotoSansKhmer-Regular.ttf',
+//   './testFonts/NotoSansMongolian-Regular.ttf',
+//   './testFonts/NotoSansCanadianAboriginal-Regular.ttf',
+//   './testFonts/NotoSansNKo-Regular.ttf',
+//   './testFonts/NotoSansArmenian-Regular.ttf',
+//   './testFonts/NotoSansHebrew-Regular.ttf',
+//   './testFonts/NotoSansKannada-Regular.ttf',
+//   './testFonts/NotoSansThai-Regular.ttf',
+//   './testFonts/NotoSansArabic-Medium.ttf',
+//   './testFonts/NotoSansLao-Regular.ttf',
+//   './testFonts/NotoSansGeorgian-Regular.ttf',
+//   './testFonts/NotoSansTibetan-Regular.ttf',
+//   './testFonts/NotoSansTamil-Regular.ttf',
+//   './testFonts/NotoSansTelugu-Regular.ttf',
+//   './testFonts/NotoSansBengali-Regular.ttf',
+//   './testFonts/NotoSansDevanagari-Regular.ttf',
+//   './testFonts/NotoSansMalayalam-Regular.ttf',
+//   './testFonts/NotoSansCJKtc-Regular.ttf',
+//   './testFonts/NotoSansCJKjp-Regular.otf',
+//   './testFonts/NotoSansCJKkr-Regular.otf',
+//   './testFonts/NotoSansCJKsc-Regular.otf',
+//   './testFonts/NotoSansCJKtc-Regular.otf'
+// ]
+//
+// buildFonts(fonts, charset + ' ', './default.pbf')
+//
+// buildFonts(['./testFonts/Roboto-Medium.ttf'], charset + ' ', './RobotoMedium.pbf')
+// buildFonts(['./testFonts/Roboto-Regular.ttf'], charset + ' ', './RobotoRegular.pbf')
 
 // old default 1.4M
 // new default 1.0M
@@ -48,9 +50,9 @@ const zlib = require('zlib')
 
 const GlyphSet = require('./lib/glyphSet').default
 
-// const pbf = zlib.gunzipSync(fs.readFileSync('./default.pbf'))
+const pbf = zlib.gunzipSync(fs.readFileSync('./default.pbf'))
 // const pbf = zlib.gunzipSync(fs.readFileSync('./testFont.pbf'))
-const pbf = zlib.gunzipSync(fs.readFileSync('./RobotoMedium.pbf'))
+// const pbf = zlib.gunzipSync(fs.readFileSync('./RobotoMedium.pbf'))
 
 console.time('build')
 const glyphSet = new GlyphSet(pbf)

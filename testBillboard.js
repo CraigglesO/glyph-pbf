@@ -1,16 +1,26 @@
 const buildBillboards = require('./lib/buildBillboards').default
 
-const billboards = [
-  // './svgs2/airfield2.svg',
-  // './svgs2/aquarium2.svg',
-  // './svgs2/cafe2.svg',
-  // './svgs2/campsite2.svg',
-  // './svgs2/college2.svg',
-  // './svgs2/zoo2.svg'
-  './svgs2/test.svg'
+// const billboards = [
+//   // './svgs2/airfield2.svg',
+//   // './svgs2/aquarium2.svg',
+//   // './svgs2/cafe2.svg',
+//   // './svgs2/campsite2.svg',
+//   // './svgs2/college2.svg',
+//   // './svgs2/zoo2.svg'
+//   // './svgs2/test.svg'
+//   // './svgs2/marker.svg'
+// ]
+
+// buildBillboards(billboards, 'billboards.pbf')
+
+const tesla = [
+  './icons/tesla/charger.svg',
+  './icons/tesla/service.svg',
+  './icons/tesla/store.svg',
+  './icons/tesla/supercharger.svg'
 ]
 
-buildBillboards(billboards, 'billboards.pbf')
+buildBillboards(tesla, 'tesla_billboards.pbf')
 
 // READ BACK
 
@@ -18,15 +28,18 @@ const fs = require('fs')
 const zlib = require('zlib')
 const GlyphSet = require('./lib/glyphSet').default
 
-const pbf = zlib.gunzipSync(fs.readFileSync('./billboards.pbf'))
+const pbf = zlib.gunzipSync(fs.readFileSync('./tesla_billboards.pbf'))
 const glyphSet = new GlyphSet(pbf)
 
-// const zoo2 = glyphSet.get('zoo2')
+const store = glyphSet.get('store')
 //
-// console.log('glyphSet', glyphSet)
-// console.log('zoo2', zoo2)
+console.log('glyphSet', glyphSet)
+console.log('store', store)
 
+// const glyph = glyphSet.get('marker')
+// console.log('marker', glyph)
 const glyph = glyphSet.get('0')
+console.log(glyph)
 
 // const path = glyph.getPath(false)
 // console.log('path', path)
