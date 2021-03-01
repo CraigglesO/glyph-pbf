@@ -16,3 +16,10 @@ svgs2
 experiment
 icons
 placeCharset.txt
+addCapitals.js
+buildGlyph.js
+getPath.js
+readTest.js
+organizeCharset.js
+missingChars.txt
+missingChars.js
