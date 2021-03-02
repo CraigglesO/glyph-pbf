@@ -3,7 +3,7 @@ test
 fixtures
 proto
 testFont.js
-testBillboard.js
+testIcon.js
 testPathParser.js
 testFonts
 *.pbf

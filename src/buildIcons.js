@@ -25,7 +25,7 @@ export type Feature = {
 
 export type Color = [number, number, number, number]
 
-export type Billboard = {
+export type Icon = {
   name: string,
   width: number,
   height: number,
@@ -34,12 +34,12 @@ export type Billboard = {
 
 const PARSE_OPTIONS = { parseAttributeValue: true, ignoreAttributes: false, attributeNamePrefix: '' }
 
-export default function buildBillboards (paths: Array<string>, out: string, options?: Options) {
+export default function buildIcons (paths: Array<string>, out: string, foregroundTexts?: Object, options?: Options) {
   options = { extent: 4096, ...options }
   let geometry: Array<Geometry> = []
-  const billboards: Array<Billboard> = []
+  const icons: Array<Icon> = []
   let colors: Array<Color> = []
-  for (const path of paths) buildBuilboard(fs.readFileSync(path, 'utf8'), path.split('/').pop().split('.')[0], billboards, colors, geometry, options)
+  for (const path of paths) buildIcon(fs.readFileSync(path, 'utf8'), path.split('/').pop().split('.')[0], icons, colors, geometry, options)
   // update geometry to conform to commandsToCode
   const glyphMap = new Map()
   geometry.forEach((geo, i) => {
@@ -55,7 +55,7 @@ export default function buildBillboards (paths: Array<string>, out: string, opti
   // console.log('glyphMapList', glyphMapList)
   // console.log('colors', colors)
 
-  const pbf = serialize(options.extent, glyphMap, null, 'billboard', colors, billboards)
+  const pbf = serialize(options.extent, glyphMap, null, 'icon', colors, icons)
   // step 3, gzip compress and save
   const br = brotli.compress(pbf, {
     mode: 0, // 0 = generic, 1 = text, 2 = font (WOFF2)
@@ -66,7 +66,7 @@ export default function buildBillboards (paths: Array<string>, out: string, opti
   fs.writeFileSync(out + '.br', br)
 }
 
-function buildBuilboard (data: string, name: string, billboards: Array<Billboard>,
+function buildIcon (data: string, name: string, icons: Array<Icon>,
   colors: Array<Color>, geometry: Array<Geometry>, options: Options) {
   // parse SVG to JSON
   const parsedSVG = Parser.parse(data, PARSE_OPTIONS)
@@ -83,22 +83,22 @@ function buildBuilboard (data: string, name: string, billboards: Array<Billboard
     width = +viewBox[2]
     height = +viewBox[3]
   }
-  // prep billboard
-  const billboard: Billboard = { name, height, width, features: [] }
+  // prep icon
+  const icon: Icon = { name, height, width, features: [] }
 
-  _parseFeatures(svg, billboard, colors, geometry, options)
-  billboards.push(billboard)
+  _parseFeatures(svg, icon, colors, geometry, options)
+  icons.push(icon)
 }
 
-function _parseFeatures (svg: Object, billboard: Billboard, colors: Array<Color>,
+function _parseFeatures (svg: Object, icon: Icon, colors: Array<Color>,
   geometry: Array<Geometry>, options: Options) {
   for (const key in svg) {
     if (key === 'path') {
       if (svg[key]) { // multiple element objects
         if (Array.isArray(svg[key])) {
-          for (const element of svg[key]) elementParser(element, billboard, colors, geometry, options)
-        } else elementParser(svg[key], billboard, colors, geometry, options) // just one path
+          for (const element of svg[key]) elementParser(element, icon, colors, geometry, options)
+        } else elementParser(svg[key], icon, colors, geometry, options) // just one path
       }
-    } else if (key === 'g') { _parseFeatures(svg[key], billboard, colors, geometry, options) }
+    } else if (key === 'g') { _parseFeatures(svg[key], icon, colors, geometry, options) }
   }
 }

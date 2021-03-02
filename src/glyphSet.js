@@ -10,12 +10,13 @@ export type Feature = {
   colorID: number
 }
 
-export type Billboard = {
+export type Icon = {
   name: string,
-  features: Array<Feature>
+  features: Array<Feature>,
+  defaultText: Color
 }
 
-export type GlyphSetType = 'font' | 'billboard'
+export type GlyphSetType = 'font' | 'icon'
 
 export default class GlyphSet extends Map {
   version: number
@@ -25,6 +26,8 @@ export default class GlyphSet extends Map {
   constructor (data: Buffer, end?: number = 0) {
     super()
     this._buildGlyphs(data, end)
+    // set default text value for icons that are expected to have text over it (black)
+    this.set(-1, { red: 0, green: 0, blue: 0, alpha: 1 })
   }
 
   _buildGlyphs (buffer: Buffer, end: number) {
@@ -37,7 +40,7 @@ export default class GlyphSet extends Map {
       glyphSet.version = pbf.readVarint()
     } else if (tag === 14) {
       const type = pbf.readVarint()
-      glyphSet.type = (type === 0) ? 'font' : 'billboard'
+      glyphSet.type = (type === 0) ? 'font' : 'icon'
     } else if (tag === 13) {
       glyphSet.extent = pbf.readVarint()
     } else if (tag === 1) {
@@ -57,10 +60,10 @@ export default class GlyphSet extends Map {
       pbf.readFields(readColor, color, pbf.readVarint() + pbf.pos)
       glyphSet.set(color.id, [color.red / 255, color.green / 255, color.blue / 255, color.alpha / 255])
     } else if (tag === 4) {
-      // billboard
-      const billboard: Billboard = { features: [] }
-      pbf.readFields(readBillboard, billboard, pbf.readVarint() + pbf.pos)
-      glyphSet.set(billboard.name, billboard)
+      // icon
+      const icon: Icon = { features: [], defaultText: -1 }
+      pbf.readFields(readIcon, icon, pbf.readVarint() + pbf.pos)
+      glyphSet.set(icon.name, icon)
     }
   }
 
@@ -78,13 +81,15 @@ function readColor (tag: number, color: Color, pbf: Protobuf) {
   else if (tag === 5) color.alpha = pbf.readVarint()
 }
 
-function readBillboard (tag: number, billboard: Billboard, pbf: Protobuf) {
+function readIcon (tag: number, icon: Icon, pbf: Protobuf) {
   if (tag === 1) {
-    billboard.name = pbf.readString()
+    icon.name = pbf.readString()
   } else if (tag === 2) {
     const feature: Feature = {}
     pbf.readFields(readFeature, feature, pbf.readVarint() + pbf.pos)
-    billboard.features.push(feature)
+    icon.features.push(feature)
+  } else if (tag === 3) { // references the color pool
+    icon.defaultText = pbf.readVarint()
   }
 }
 

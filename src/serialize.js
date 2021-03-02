@@ -5,15 +5,15 @@ import { zigzag } from './zigzag'
 import type { Glyph, GlyphSetType, KernSet, Kern, Color } from './'
 
 export default function serialize (extent: number, glyphs: Map, kernSet: KernSet, type: GlyphSetType,
-  colors?: Array<Color>, billboards?: Array<Billboard>) {
+  colors?: Array<Color>, icons?: Array<Icon>) {
   const out = new Protobuf()
-  writeGlyphSet(extent, glyphs, kernSet, type, colors, billboards, out)
+  writeGlyphSet(extent, glyphs, kernSet, type, colors, icons, out)
   const finish = out.finish()
 
   return finish
 }
 
-function writeGlyphSet (extent: number, glyphs: Map, kernSet: KernSet, type: GlyphSetType, colors?: Array<Color>, billboards?: Array<Billboard>, pbf: Protobuf) {
+function writeGlyphSet (extent: number, glyphs: Map, kernSet: KernSet, type: GlyphSetType, colors?: Array<Color>, icons?: Array<Icon>, pbf: Protobuf) {
   // write version
   pbf.writeVarintField(15, 1)
   // write type
@@ -26,8 +26,8 @@ function writeGlyphSet (extent: number, glyphs: Map, kernSet: KernSet, type: Gly
   if (kernSet) for (const kern of kernSet) pbf.writeMessage(2, writeKernings, kern)
   // write colors
   if (colors) for (const color of colors) pbf.writeMessage(3, writeColor, color)
-  // write billboards
-  if (billboards) for (const billboard of billboards) pbf.writeMessage(4, writeBillboard, billboard)
+  // write icons
+  if (icons) for (const icon of icons) pbf.writeMessage(4, writeIcon, icon)
 }
 
 function writeGlyph (glyph: Glyph, pbf: Protobuf) {
@@ -37,7 +37,7 @@ function writeGlyph (glyph: Glyph, pbf: Protobuf) {
   if (advanceWidth) pbf.writeVarintField(2, advanceWidth)
   if (yOffset) pbf.writeVarintField(3, yOffset)
   pbf.writeMessage(4, writePath, path)
-  // incase a billboard, the glyph needs a width-to-height ratio to properly build its shape
+  // incase a icon, the glyph needs a width-to-height ratio to properly build its shape
   if (ratio) pbf.writeFloatField(5, ratio)
 }
 
@@ -49,9 +49,9 @@ function writeColor (color: Color, pbf: Protobuf) {
   pbf.writeVarintField(5, color.alpha)
 }
 
-// billboards are a collection of glyph and color pairs to draw
-function writeBillboard (billboard: Billboard, pbf: Protobuf) {
-  const { name, features } = billboard
+// icons are a collection of glyph and color pairs to draw
+function writeIcon (icon: Icon, pbf: Protobuf) {
+  const { name, features } = icon
 
   pbf.writeStringField(1, name)
   for (const feature of features) pbf.writeMessage(2, writeFeatures, feature)

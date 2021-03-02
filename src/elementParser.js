@@ -1,5 +1,5 @@
 // @flow
-import type { Options, Geometry, Color, Feature, Billboard } from './'
+import type { Options, Geometry, Color, Feature, Icon } from './'
 import parseSVG from 'svg-path-parser'
 import parseColor from './color'
 
@@ -11,7 +11,7 @@ type Path = {
   opacity?: string,
 }
 
-export default function parsePath (path: Path, billboard: Billboard, colors: Array<Color>,
+export default function parsePath (path: Path, icon: Icon, colors: Array<Color>,
   geometry: Array<Geometry>, options: Options) {
   if (path.style) _injectStyle(path, path.style)
   if (!path.fill) return
@@ -26,8 +26,8 @@ export default function parsePath (path: Path, billboard: Billboard, colors: Arr
     : [1, 1]
   // prep geo
   const geo = {
-    width: billboard.width,
-    height: billboard.height,
+    width: icon.width,
+    height: icon.height,
     instructions: []
   }
   // prep knowledge of x or y
@@ -70,7 +70,7 @@ export default function parsePath (path: Path, billboard: Billboard, colors: Arr
     geometry: geoIndex
   }
   // add the feature set
-  billboard.features.push(feature)
+  icon.features.push(feature)
   // add the color to set
   if (saveColor) colors.push(color)
   // add the geometry set

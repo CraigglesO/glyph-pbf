@@ -1,6 +1,6 @@
-const buildBillboards = require('./lib/buildBillboards').default
+const buildIcons = require('./lib/buildIcons').default
 
-// const billboards = [
+// const icons = [
 //   // './svgs2/airfield2.svg',
 //   // './svgs2/aquarium2.svg',
 //   // './svgs2/cafe2.svg',
@@ -11,7 +11,7 @@ const buildBillboards = require('./lib/buildBillboards').default
 //   // './svgs2/marker.svg'
 // ]
 
-// buildBillboards(billboards, 'billboards.pbf')
+// buildIcons(icons, 'icons.pbf')
 
 const tesla = [
   './icons/tesla/charger.svg',
@@ -20,7 +20,7 @@ const tesla = [
   './icons/tesla/supercharger.svg'
 ]
 
-buildBillboards(tesla, 'tesla_billboards.pbf')
+buildIcons(tesla, 'tesla_icons.pbf')
 
 // READ BACK
 
@@ -28,7 +28,7 @@ const fs = require('fs')
 const zlib = require('zlib')
 const GlyphSet = require('./lib/glyphSet').default
 
-const pbf = zlib.gunzipSync(fs.readFileSync('./tesla_billboards.pbf'))
+const pbf = zlib.gunzipSync(fs.readFileSync('./tesla_icons.pbf'))
 const glyphSet = new GlyphSet(pbf)
 
 const store = glyphSet.get('store')
@@ -38,7 +38,7 @@ console.log('store', store)
 
 // const glyph = glyphSet.get('marker')
 // console.log('marker', glyph)
-const glyph = glyphSet.get('0')
+const glyph = glyphSet.get('5')
 console.log(glyph)
 
 // const path = glyph.getPath(false)
