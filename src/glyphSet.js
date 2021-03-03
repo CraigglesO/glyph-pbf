@@ -58,7 +58,7 @@ export default class GlyphSet extends Map {
       // color
       const color: Color = {}
       pbf.readFields(readColor, color, pbf.readVarint() + pbf.pos)
-      glyphSet.set(color.id, [color.red / 255, color.green / 255, color.blue / 255, color.alpha / 255])
+      glyphSet.set(color.id, [color.red, color.green, color.blue, color.alpha])
     } else if (tag === 4) {
       // icon
       const icon: Icon = { features: [], defaultText: -1 }

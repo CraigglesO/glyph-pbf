@@ -1,6 +1,6 @@
 {
   "name": "glyph-pbf",
-  "version": "2.2.2",
+  "version": "2.2.3",
   "description": "Compress glyph data into a protobuf and back again.",
   "main": "lib/index.js",
   "scripts": {

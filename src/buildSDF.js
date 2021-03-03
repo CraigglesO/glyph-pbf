@@ -26,7 +26,7 @@ export default function buildSDF (glyph: Array<number>, offset: [number, number]
   let len = glyph.length
   const cursor: Cursor = { x0: 0, y0: 0, x: 0, y: 0, x1: 0, y1: 0, x2: 0, y2: 0, anchor: 0, indexPos: -1, lineWidth }
   let i = 0
-  let cmd, startX, startY, ux0 = 0, uy0 = 0, ax = 0, ay = 0 // unmodifiedX0, unmodifiedY0, anchorX, anchorY
+  let cmd ux0 = 0, uy0 = 0, ax = 0, ay = 0 // unmodifiedX0, unmodifiedY0, anchorX, anchorY
 
   while (i < len) {
     // get new command
@@ -35,8 +35,6 @@ export default function buildSDF (glyph: Array<number>, offset: [number, number]
     if (cmd === 0) { // moveTo
       ux0 = glyph[i++]
       uy0 = glyph[i++]
-      startX = ux0
-      startY = uy0
       cursor.x0 = ux0 / extent * ratio * scale + offset[0] + lineWidth
       cursor.y0 = uy0 / extent * scale + offset[1] + lineWidth
       ax = cursor.x0
@@ -69,8 +67,6 @@ export default function buildSDF (glyph: Array<number>, offset: [number, number]
       _quadraticTo(cursor, res)
     } else if (cmd === 4) { // Close
       // store a final "lineTo" stroke
-      ux0 = startX
-      uy0 = startY
       res.strokes.push(...fromLine([cursor.x0, cursor.y0], [ax, ay], lineWidth))
     } else if (cmd === 5) { // moveTo delta
       ux0 += glyph[i++]
