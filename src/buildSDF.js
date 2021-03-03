@@ -26,7 +26,7 @@ export default function buildSDF (glyph: Array<number>, offset: [number, number]
   let len = glyph.length
   const cursor: Cursor = { x0: 0, y0: 0, x: 0, y: 0, x1: 0, y1: 0, x2: 0, y2: 0, anchor: 0, indexPos: -1, lineWidth }
   let i = 0
-  let cmd ux0 = 0, uy0 = 0, ax = 0, ay = 0 // unmodifiedX0, unmodifiedY0, anchorX, anchorY
+  let cmd, ux0 = 0, uy0 = 0, ax = 0, ay = 0 // unmodifiedX0, unmodifiedY0, anchorX, anchorY
 
   while (i < len) {
     // get new command
