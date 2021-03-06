@@ -36,7 +36,7 @@ const PARSE_OPTIONS = { parseAttributeValue: true, ignoreAttributes: false, attr
 
 export default function buildIcons (paths: Array<string>, out: string,
   foregroundTexts?: Object, options?: Options) {
-  options = { extent: 4096, glyphSize: 48, ...options }
+  options = { extent: 4096, glyphSize: 42, ...options }
   let geometry: Array<Geometry> = []
   const icons: Array<Icon> = []
   let colors: Array<Color> = []
@@ -45,7 +45,7 @@ export default function buildIcons (paths: Array<string>, out: string,
   const glyphMap = new Map()
   geometry.forEach((geo, i) => {
     const geoCode = commandsToCode(geo.instructions, options.extent, 1, false)
-    geoCode.path = reduceSize(geoCode.path)
+    // geoCode.path = reduceSize(geoCode.path)
     geoCode.ratio = geo.width / geo.height
     glyphMap.set(i, geoCode)
   })

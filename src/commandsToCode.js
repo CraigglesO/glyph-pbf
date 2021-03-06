@@ -21,16 +21,19 @@ export default function commandsToCode (commands: Array<Command>, extent: number
   multiplier: number = -1, includeYOffset: boolean = true): Code {
   if (!commands.length) return { yOffset: 0, path: [] }
   let prevX: number = 0, prevY: number = 0, same: number, yVal: number
+  let startX: number = 0, startY: number = 0
   let yOffset: number = Infinity
   const path = []
   commands.forEach(command => {
     const { type, x, y, x1, y1, x2, y2, rx, ry, xar, laf, sf } = command
     same = type.toUpperCase() === type && x === prevX && y === prevY
-    if (type !== 'Z' && type.toUpperCase() !== 'H') {
+    if (type !== 'Z' && type !== 'z' && type.toUpperCase() !== 'H') {
       yVal = Math.round(multiplier * y * extent)
       yOffset = Math.min(yOffset, yVal)
     }
     if (type === 'M') { // MoveTo
+      startX = x
+      startY = y
       path.push(0, Math.round(x * extent), Math.round(multiplier * y * extent))
     } else if (type === 'L') { // LineTo
       if (!same) path.push(1, Math.round(x * extent), Math.round(multiplier * y * extent))
@@ -38,9 +41,13 @@ export default function commandsToCode (commands: Array<Command>, extent: number
       if (!same) path.push(2, Math.round(x1 * extent), Math.round(multiplier * y1 * extent), Math.round(x2 * extent), Math.round(multiplier * y2 * extent), Math.round(x * extent), Math.round(multiplier * y * extent))
     } else if (type === 'Q') { // quadraticBezierTo
       if (!same) path.push(3, Math.round(x1 * extent), Math.round(multiplier * y1 * extent), Math.round(x * extent), Math.round(multiplier * y * extent))
-    } else if (type === 'Z') { // close
+    } else if (type === 'Z' || type === 'z') { // close
+      prevX = startX
+      prevY = startY
       path.push(4)
     } else if (type === 'm') { // moveTo delta
+      startX += x
+      startY += y
       path.push(5, Math.round(x * extent), Math.round(multiplier * y * extent))
     } else if (type === 'l') { // lineTo delta
       path.push(6, Math.round(x * extent), Math.round(multiplier * y * extent))
@@ -74,7 +81,7 @@ export default function commandsToCode (commands: Array<Command>, extent: number
       path.push(..._arcCurve(extent, multiplier, prevX, prevY, prevX + x, prevY + y, rx, ry, xar, laf, sf))
     }
     // update new previous x and y
-    if (type !== 'Z') {
+    if (type !== 'Z' && type !== 'z') {
       if (type.toUpperCase() !== 'V') {
         if (type === type.toUpperCase()) prevX = x
         else prevX += x
