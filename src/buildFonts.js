@@ -25,11 +25,12 @@ export type Kern = {
   amount: number
 }
 
-export default function buildFonts (fonts: Array<string>, charset: string, out: string, extent?: number = 1024) {
+export default function buildFonts (fonts: Array<string>, charset: string, out: string,
+  extent?: number = 1024, glyphSize?: number, sdfMaxSize?: number) {
   // step 1, build a glyph set
   const [glyphMap, kernSet] = buildGlyphSet(fonts, charset, extent)
   // step 2, build the pbf
-  const pbf = serialize(extent, glyphMap, kernSet, 'font')
+  const pbf = serialize({ extent, glyphSize, sdfMaxSize }, glyphMap, kernSet, 'font')
   // step 3, gzip and brotli compress and save
   const br = brotli.compress(pbf, {
     mode: 0, // 0 = generic, 1 = text, 2 = font (WOFF2)

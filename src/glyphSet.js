@@ -20,7 +20,9 @@ export type GlyphSetType = 'font' | 'icon'
 
 export default class GlyphSet extends Map {
   version: number
-  extent: number
+  extent: number = 1024
+  glyphSize: number = 34
+  sdfMaxSize: number = 4
   type: GlyphSetType
   kerningPairs: KernSet = {}
   constructor (data: Buffer, end?: number = 0) {
@@ -43,6 +45,10 @@ export default class GlyphSet extends Map {
       glyphSet.type = (type === 0) ? 'font' : 'icon'
     } else if (tag === 13) {
       glyphSet.extent = pbf.readVarint()
+    } else if (tag === 12) {
+      glyphSet.glyphSize = pbf.readVarint()
+    } else if (tag === 11) {
+      glyphSet.sdfMaxSize = pbf.readVarint()
     } else if (tag === 1) {
       const glyph: Glyph = new Glyph(pbf, glyphSet.extent, pbf.readVarint() + pbf.pos)
       if (glyphSet.type === 'font') glyphSet.set(String.fromCharCode(glyph.char), glyph)

@@ -4,22 +4,33 @@ import { zigzag } from './zigzag'
 
 import type { Glyph, GlyphSetType, KernSet, Kern, Color } from './'
 
-export default function serialize (extent: number, glyphs: Map, kernSet: KernSet, type: GlyphSetType,
+export type Settings = {
+  extent: number,
+  glyphSize: number,
+  sdfMaxSize: number
+}
+
+export default function serialize (settings: Settings, glyphs: Map, kernSet: KernSet, type: GlyphSetType,
   colors?: Array<Color>, icons?: Array<Icon>) {
   const out = new Protobuf()
-  writeGlyphSet(extent, glyphs, kernSet, type, colors, icons, out)
+  writeGlyphSet(settings, glyphs, kernSet, type, colors, icons, out)
   const finish = out.finish()
 
   return finish
 }
 
-function writeGlyphSet (extent: number, glyphs: Map, kernSet: KernSet, type: GlyphSetType, colors?: Array<Color>, icons?: Array<Icon>, pbf: Protobuf) {
+function writeGlyphSet (settings: Settings, glyphs: Map, kernSet: KernSet, type: GlyphSetType, colors?: Array<Color>, icons?: Array<Icon>, pbf: Protobuf) {
+  const { extent, glyphSize, sdfMaxSize } = settings
   // write version
   pbf.writeVarintField(15, 1)
   // write type
   pbf.writeVarintField(14, (type === 'font') ? 0 : 1)
   // write extent
-  pbf.writeVarintField(13, extent)
+  if (extent) pbf.writeVarintField(13, extent)
+  // write glyphSize
+  if (glyphSize) pbf.writeVarintField(12, glyphSize)
+  // write glyphSize
+  if (sdfMaxSize) pbf.writeVarintField(11, sdfMaxSize)
   // write glyphs
   for (const glyph of glyphs) pbf.writeMessage(1, writeGlyph, glyph)
   // kern set

@@ -34,8 +34,9 @@ export type Icon = {
 
 const PARSE_OPTIONS = { parseAttributeValue: true, ignoreAttributes: false, attributeNamePrefix: '' }
 
-export default function buildIcons (paths: Array<string>, out: string, foregroundTexts?: Object, options?: Options) {
-  options = { extent: 4096, ...options }
+export default function buildIcons (paths: Array<string>, out: string,
+  foregroundTexts?: Object, options?: Options) {
+  options = { extent: 4096, glyphSize: 48, ...options }
   let geometry: Array<Geometry> = []
   const icons: Array<Icon> = []
   let colors: Array<Color> = []
@@ -55,7 +56,7 @@ export default function buildIcons (paths: Array<string>, out: string, foregroun
   // console.log('glyphMapList', glyphMapList)
   // console.log('colors', colors)
 
-  const pbf = serialize(options.extent, glyphMap, null, 'icon', colors, icons)
+  const pbf = serialize(options, glyphMap, null, 'icon', colors, icons)
   // step 3, gzip compress and save
   const br = brotli.compress(pbf, {
     mode: 0, // 0 = generic, 1 = text, 2 = font (WOFF2)
